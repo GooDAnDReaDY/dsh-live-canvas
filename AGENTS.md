@@ -3,7 +3,7 @@
 ## Project Scope
 - Plugin: `@goodandready-private/dsh-live-canvas`
 - Architecture: DeepSeek Harness Cordis plugin + Web client
-- Canonical path: `/mnt/external/Project/DEV/dhsplugins/dsh-live-canvas`
+- Base Directory: `dhsplugins/dsh-live-canvas`
 
 ## Rules
 - Tests must pass: `node --test test/*.test.mjs`
