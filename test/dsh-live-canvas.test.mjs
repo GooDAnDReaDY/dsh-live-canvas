@@ -17,7 +17,20 @@ test('private package identity matches all loader sites', () => {
 });
 
 test('tracked package sources contain no host-specific infra references', () => {
-  const tracked = ['README.md', 'AGENTS.md', 'index.md', 'package.json', 'cordis.patch.yml', 'lib/client.js', 'lib/index.js'];
+  const tracked = [
+    'README.md',
+    'AGENTS.md',
+    'index.md',
+    'package.json',
+    'cordis.patch.yml',
+    'lib/client.js',
+    'lib/index.js',
+    'lib/store.js',
+    'lib/events.js',
+    'lib/transpiler.js',
+    'lib/sandbox.js',
+    'lib/tools.js'
+  ];
   for (const file of tracked) {
     const text = read(file);
     for (const marker of ['/' + 'home/', '/' + 'mnt/', '192.' + '168.', 'f' + 'ile:']) {
