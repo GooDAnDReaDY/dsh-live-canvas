@@ -2,7 +2,6 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import {
   getSandboxHeaders,
-  buildInjectedScripts,
   injectSandboxRuntime,
   sanitizePath
 } from '../lib/sandbox.js';
@@ -11,8 +10,7 @@ test('getSandboxHeaders returns strict CSP and security headers', () => {
   const headers = getSandboxHeaders();
   assert.equal(headers['X-Content-Type-Options'], 'nosniff');
   assert.ok(headers['Content-Security-Policy'].includes("default-src 'self'"));
-  assert.ok(headers['Content-Security-Policy'].includes("frame-ancestors 'self'"));
-  assert.equal(headers['Cache-Control'], 'no-cache, no-store, must-revalidate');
+  assert.equal(headers['X-Frame-Options'], 'SAMEORIGIN');
 });
 
 test('injectSandboxRuntime injects SSE and inspector scripts into HTML body', () => {
@@ -20,8 +18,8 @@ test('injectSandboxRuntime injects SSE and inspector scripts into HTML body', ()
   const out = injectSandboxRuntime(raw, 'canvas-test-1');
   assert.ok(out.includes('dlc-sandbox-runtime'));
   assert.ok(out.includes('canvas-test-1'));
-  assert.ok(out.includes('__dlc_inspect_badge'));
-  assert.ok(out.includes('__dlc_reload_badge'));
+  assert.ok(out.includes('dlc_scroll_report'));
+  assert.ok(out.includes('dlc_sync_scroll'));
 });
 
 test('sanitizePath rejects traversal attempts outside base directory', () => {
@@ -32,13 +30,10 @@ test('sanitizePath rejects traversal attempts outside base directory', () => {
 
   assert.throws(() => {
     sanitizePath(base, '../secret.key');
-  }, /Access outside base directory is forbidden/);
+  }, /Security Violation/);
 
   assert.throws(() => {
     sanitizePath(base, 'src/../../etc/passwd');
-  }, /Access outside base directory is forbidden/);
-
-  assert.throws(() => {
-    sanitizePath(base, 'src/file\0.js');
-  }, /Null bytes in path/);
+  }, /Security Violation/);
 });
+

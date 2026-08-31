@@ -17,7 +17,7 @@ function createMockCtx() {
   };
 }
 
-test('registerLiveCanvasTools registers all ten agent tools', async () => {
+test('registerLiveCanvasTools registers all eleven agent tools', async () => {
   const ctx = createMockCtx();
   const store = new PreviewStore();
   const eventHub = new EventHub({ heartbeatIntervalMs: 60000 });
@@ -35,6 +35,7 @@ test('registerLiveCanvasTools registers all ten agent tools', async () => {
   const watchTool = ctx._getTool('live_canvas_watch');
   const controlsTool = ctx._getTool('live_canvas_controls');
   const diffTool = ctx._getTool('live_canvas_diff');
+  const matrixTool = ctx._getTool('live_canvas_matrix');
 
   assert.ok(previewTool, 'live_canvas_preview tool should be registered');
   assert.ok(inspectTool, 'live_canvas_inspect tool should be registered');
@@ -46,6 +47,7 @@ test('registerLiveCanvasTools registers all ten agent tools', async () => {
   assert.ok(watchTool, 'live_canvas_watch tool should be registered');
   assert.ok(controlsTool, 'live_canvas_controls tool should be registered');
   assert.ok(diffTool, 'live_canvas_diff tool should be registered');
+  assert.ok(matrixTool, 'live_canvas_matrix tool should be registered');
 
   eventHub.closeAll();
 });
