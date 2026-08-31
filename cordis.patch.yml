@@ -1,2 +1,3 @@
-- id: dsh-live-canvas
-  name: '@goodandready-private/dsh-live-canvas'
+- insert:
+    - id: dsh-live-canvas
+      name: '@goodandready-private/dsh-live-canvas'
