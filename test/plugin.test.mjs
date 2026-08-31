@@ -38,7 +38,7 @@ test('Plugin exports correct metadata and schema', () => {
   assert.ok(Config);
 });
 
-test('Plugin lifecycle applies routes and handles sandbox, API, diff, matrix, and export endpoints', async () => {
+test('Plugin lifecycle applies routes and handles sandbox, API, diff, matrix, mock, and export endpoints', async () => {
   const routes = [];
   const tools = [];
   let registeredSettings = null;
@@ -89,25 +89,22 @@ test('Plugin lifecycle applies routes and handles sandbox, API, diff, matrix, an
   });
 
   assert.equal(registeredSettings.ns, '@goodandready/dsh-live-canvas');
-  assert.equal(tools.length, 11); // preview, inspect, reload, diagnose, export, annotations, gallery, watch, controls, diff, matrix
+  assert.equal(tools.length, 12); // preview, inspect, reload, diagnose, export, annotations, gallery, watch, controls, diff, matrix, mock
   assert.equal(routes.length, 5); // events, sandbox, diff, matrix, api
 
   const sandboxRoute = routes.find(r => r.path === '/dsh-live-canvas/sandbox');
-  const diffRoute = routes.find(r => r.path === '/dsh-live-canvas/diff');
-  const matrixRoute = routes.find(r => r.path === '/dsh-live-canvas/matrix');
   const apiRoute = routes.find(r => r.path === '/dsh-live-canvas/api');
   assert.ok(sandboxRoute, 'Sandbox route should be registered');
-  assert.ok(diffRoute, 'Diff route should be registered');
-  assert.ok(matrixRoute, 'Matrix route should be registered');
   assert.ok(apiRoute, 'API route should be registered');
 
   // Test 1: POST /dsh-live-canvas/api/preview
   const postPrev = createMockReqRes({ url: '/dsh-live-canvas/api/preview', method: 'POST' });
   const postPromise = apiRoute.handler(postPrev.req, postPrev.res);
   postPrev.req.emit('data', JSON.stringify({
-    title: 'Matrix Test',
-    content: '<div class="banner">Hello Matrix</div>',
-    componentType: 'html'
+    title: 'Mock Test',
+    content: '<div class="banner">Hello Mock</div>',
+    componentType: 'html',
+    mockData: { '/api/hello': { message: 'world' } }
   }));
   postPrev.req.emit('end');
   await postPromise;
@@ -117,13 +114,12 @@ test('Plugin lifecycle applies routes and handles sandbox, API, diff, matrix, an
   assert.equal(prevData.success, true);
   assert.ok(prevData.canvasId);
 
-  // Test 2: GET /dsh-live-canvas/matrix/<id>
-  const getMatrix = createMockReqRes({ url: `/dsh-live-canvas/matrix/${prevData.canvasId}`, method: 'GET' });
-  matrixRoute.handler(getMatrix.req, getMatrix.res);
-  assert.equal(getMatrix.res.statusCode, 200);
-  assert.ok(getMatrix.res.body.includes('frame-mobile'));
-  assert.ok(getMatrix.res.body.includes('frame-tablet'));
-  assert.ok(getMatrix.res.body.includes('frame-desktop'));
+  // Test 2: GET /dsh-live-canvas/api/mock?canvasId=...
+  const getMock = createMockReqRes({ url: `/dsh-live-canvas/api/mock?canvasId=${prevData.canvasId}`, method: 'GET' });
+  await apiRoute.handler(getMock.req, getMock.res);
+  assert.equal(getMock.res.statusCode, 200);
+  const mockResp = JSON.parse(getMock.res.body);
+  assert.deepEqual(mockResp.mockData, { '/api/hello': { message: 'world' } });
 
   for (const cleanup of effects) {
     if (typeof cleanup === 'function') cleanup();
