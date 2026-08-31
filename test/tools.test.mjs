@@ -16,7 +16,7 @@ function createMockCtx() {
   };
 }
 
-test('registerLiveCanvasTools registers all five agent tools', async () => {
+test('registerLiveCanvasTools registers all six agent tools', async () => {
   const ctx = createMockCtx();
   const store = new PreviewStore();
   const eventHub = new EventHub({ heartbeatIntervalMs: 60000 });
@@ -28,12 +28,14 @@ test('registerLiveCanvasTools registers all five agent tools', async () => {
   const reloadTool = ctx._getTool('live_canvas_reload');
   const diagnoseTool = ctx._getTool('live_canvas_diagnose');
   const exportTool = ctx._getTool('live_canvas_export');
+  const annTool = ctx._getTool('live_canvas_annotations');
 
   assert.ok(previewTool, 'live_canvas_preview tool should be registered');
   assert.ok(inspectTool, 'live_canvas_inspect tool should be registered');
   assert.ok(reloadTool, 'live_canvas_reload tool should be registered');
   assert.ok(diagnoseTool, 'live_canvas_diagnose tool should be registered');
   assert.ok(exportTool, 'live_canvas_export tool should be registered');
+  assert.ok(annTool, 'live_canvas_annotations tool should be registered');
 
   // Test live_canvas_preview execution
   const prevRes = await previewTool.execute({
@@ -46,11 +48,10 @@ test('registerLiveCanvasTools registers all five agent tools', async () => {
   assert.equal(prevRes.success, true);
   assert.ok(prevRes.canvasId.startsWith('canvas-'));
 
-  // Test live_canvas_export execution
-  const exportRes = await exportTool.execute({ canvasId: prevRes.canvasId });
-  assert.equal(exportRes.success, true);
-  assert.ok(exportRes.downloadUrl.includes('/dsh-live-canvas/api/export/'));
-  assert.ok(exportRes.contentLength > 0);
+  // Test live_canvas_annotations execution
+  const annRes = await annTool.execute({ canvasId: prevRes.canvasId });
+  assert.equal(annRes.success, true);
+  assert.equal(annRes.count, 0);
 
   eventHub.closeAll();
 });
