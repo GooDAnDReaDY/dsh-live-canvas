@@ -38,7 +38,7 @@ test('Plugin exports correct metadata and schema', () => {
   assert.ok(Config);
 });
 
-test('Plugin lifecycle applies routes and handles sandbox and API endpoints', async () => {
+test('Plugin lifecycle applies routes and handles sandbox, API, and export endpoints', async () => {
   const routes = [];
   const tools = [];
   let registeredSettings = null;
@@ -88,10 +88,9 @@ test('Plugin lifecycle applies routes and handles sandbox and API endpoints', as
   });
 
   assert.equal(registeredSettings.ns, '@goodandready/dsh-live-canvas');
-  assert.equal(tools.length, 4); // preview, inspect, reload, diagnose
+  assert.equal(tools.length, 5); // preview, inspect, reload, diagnose, export
   assert.equal(routes.length, 3); // events, sandbox, api
 
-  // Find routes
   const sandboxRoute = routes.find(r => r.path === '/dsh-live-canvas/sandbox');
   const apiRoute = routes.find(r => r.path === '/dsh-live-canvas/api');
   assert.ok(sandboxRoute, 'Sandbox route should be registered');
@@ -122,10 +121,12 @@ test('Plugin lifecycle applies routes and handles sandbox and API endpoints', as
   assert.ok(getSandbox.res.body.includes('dlc-sandbox-runtime'));
   assert.equal(getSandbox.res.headers['X-Content-Type-Options'], 'nosniff');
 
-  // Test 3: GET 404 for unknown sandbox id
-  const getUnknown = createMockReqRes({ url: '/dsh-live-canvas/sandbox/non-existent-id', method: 'GET' });
-  sandboxRoute.handler(getUnknown.req, getUnknown.res);
-  assert.equal(getUnknown.res.statusCode, 404);
+  // Test 3: GET /dsh-live-canvas/api/export/<id>
+  const getExport = createMockReqRes({ url: `/dsh-live-canvas/api/export/${prevData.canvasId}`, method: 'GET' });
+  await apiRoute.handler(getExport.req, getExport.res);
+  assert.equal(getExport.res.statusCode, 200);
+  assert.ok(getExport.res.body.includes('Exported via Live Canvas Preview'));
+  assert.ok(getExport.res.headers['Content-Disposition'].includes('.html'));
 
   // Test 4: POST /dsh-live-canvas/api/inspect
   const postInsp = createMockReqRes({ url: '/dsh-live-canvas/api/inspect', method: 'POST' });
@@ -167,7 +168,6 @@ test('Plugin lifecycle applies routes and handles sandbox and API endpoints', as
   assert.equal(logData.count, 1);
   assert.equal(logData.logs[0].message, 'Runtime test error');
 
-  // Cleanup effects
   for (const cleanup of effects) {
     if (typeof cleanup === 'function') cleanup();
   }

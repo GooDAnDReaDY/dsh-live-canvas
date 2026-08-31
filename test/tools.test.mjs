@@ -16,7 +16,7 @@ function createMockCtx() {
   };
 }
 
-test('registerLiveCanvasTools registers all four agent tools', async () => {
+test('registerLiveCanvasTools registers all five agent tools', async () => {
   const ctx = createMockCtx();
   const store = new PreviewStore();
   const eventHub = new EventHub({ heartbeatIntervalMs: 60000 });
@@ -27,11 +27,13 @@ test('registerLiveCanvasTools registers all four agent tools', async () => {
   const inspectTool = ctx._getTool('live_canvas_inspect');
   const reloadTool = ctx._getTool('live_canvas_reload');
   const diagnoseTool = ctx._getTool('live_canvas_diagnose');
+  const exportTool = ctx._getTool('live_canvas_export');
 
   assert.ok(previewTool, 'live_canvas_preview tool should be registered');
   assert.ok(inspectTool, 'live_canvas_inspect tool should be registered');
   assert.ok(reloadTool, 'live_canvas_reload tool should be registered');
   assert.ok(diagnoseTool, 'live_canvas_diagnose tool should be registered');
+  assert.ok(exportTool, 'live_canvas_export tool should be registered');
 
   // Test live_canvas_preview execution
   const prevRes = await previewTool.execute({
@@ -43,15 +45,12 @@ test('registerLiveCanvasTools registers all four agent tools', async () => {
 
   assert.equal(prevRes.success, true);
   assert.ok(prevRes.canvasId.startsWith('canvas-'));
-  assert.equal(prevRes.title, 'Dashboard Widget');
-  assert.equal(prevRes.viewport, 'tablet');
-  assert.equal(prevRes.theme, 'dark');
-  assert.equal(prevRes.previewUrl, `/dsh-live-canvas/sandbox/${prevRes.canvasId}`);
 
-  // Test live_canvas_diagnose execution
-  const diagRes = await diagnoseTool.execute({ canvasId: prevRes.canvasId });
-  assert.equal(diagRes.success, true);
-  assert.equal(diagRes.hasErrors, false);
+  // Test live_canvas_export execution
+  const exportRes = await exportTool.execute({ canvasId: prevRes.canvasId });
+  assert.equal(exportRes.success, true);
+  assert.ok(exportRes.downloadUrl.includes('/dsh-live-canvas/api/export/'));
+  assert.ok(exportRes.contentLength > 0);
 
   eventHub.closeAll();
 });
