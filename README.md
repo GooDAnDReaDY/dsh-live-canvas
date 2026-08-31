@@ -2,7 +2,7 @@
 
 <div align="center">
 
-<h3>Real-Time Live Preview Sandbox, DOM Inspector, Visual Diff, Device Matrix & 1-Click Vite Packager for DeepSeek Harness</h3>
+<h3>Interactive Visual Development Studio, Split-View Code Editor, Component Storybook, Drag & Drop Canvas, Curated UI Blocks, and 1-Click Vite Packager for DeepSeek Harness</h3>
 
 <p align="center">
   <a href="https://www.npmjs.com/package/@goodandready/dsh-live-canvas"><img src="https://img.shields.io/npm/v/@goodandready/dsh-live-canvas.svg?style=for-the-badge&color=6366f1&labelColor=1e1b4b" alt="npm version"></a>
@@ -25,112 +25,150 @@
 
 ---
 
-## ⚡ Overview
+## ⚡ Overview & The Problem
 
-**`dsh-live-canvas`** equips **DeepSeek Harness** agents with an interactive, real-time in-browser sandbox for building, testing, and visualizing frontend interfaces on the fly.
+Building and iterating modern front-end interfaces inside an AI agent workspace usually suffers from several bottlenecks:
+- **Blind Code Generation**: Agents write HTML/JSX code, but human developers must switch out to external bundlers or browsers to inspect the visual output.
+- **Lost Context on Recompilation**: Typical reloads lose local state, component hierarchy, and responsive breakpoint context.
+- **Complex Multi-File References**: Single-file previews break when React components import local child modules (`./Header.jsx`, `./theme.css`, `./data.js`) or serve local images.
+- **Friction in Fine-Tuning**: Minor text tweaks or color adjustments require full conversational roundtrips with the agent instead of instant in-place visual edits.
 
-Whenever an agent writes HTML, React 18 (JSX/TSX), Vue, SVG, Mermaid diagrams, or Markdown, `dsh-live-canvas` instantly compiles and renders the result with **SSE hot-reload, DOM click inspection, visual side-by-side diffing, multi-device viewport testing, and 1-click Vite ZIP export**.
+**`dsh-live-canvas`** transforms DeepSeek Harness into a full-featured visual development studio with zero setup. It provides instant hot-reloaded canvas previews, multi-file recursive ESM bundling, an inline WYSIWYG text editor, a floating Tailwind style tweaker, a split-view code drawer, an automated Storybook matrix generator, visual Drag-and-Drop section reordering, a curated agency-level UI blocks library, and 1-click Vite project export.
+
+---
+
+## 🏛️ Architecture Overview
 
 ```mermaid
-graph LR
-    subgraph AgentLoop [DSH Agent Execution Loop]
-        Agent[🤖 Agent: Writes UI Code] --> Tool[Tool: live_canvas_preview]
-    end
+graph TD
+    classDef agent fill:#1e1b4b,stroke:#6366f1,stroke-width:2px,color:#fff;
+    classDef core fill:#064e3b,stroke:#10b981,stroke-width:2px,color:#fff;
+    classDef ui fill:#451a03,stroke:#f59e0b,stroke-width:2px,color:#fff;
+    classDef sandbox fill:#18181b,stroke:#71717a,stroke-width:2px,color:#fff;
 
-    subgraph CanvasCore [dsh-live-canvas Engine]
-        Tool --> Transpiler[In-Browser Babel & JIT Transpiler]
-        Transpiler --> Sandbox[Isolated Iframe Sandbox]
-        Sandbox --> SSE[SSE Hot-Reload Stream]
-    end
+    Agent[🤖 DeepSeek Harness Agent / Tools]:::agent
+    Store[💾 PreviewStore LRU Cache & Version Snapshots]:::core
+    Watcher[📁 WorkspaceWatcher File Change Detection]:::core
+    Bundler[⚡ Smart ESM Bundler & Transpiler]:::core
+    StaticAsset[🖼️ Static Asset Server /assets/*]:::core
 
-    subgraph Features [Interactive Studio Suite]
-        Sandbox --> Inspector[🔍 DOM Click Inspector]
-        Sandbox --> Diff[🌓 Visual Diff & Split Slider]
-        Sandbox --> Matrix[📱 Responsive Device Matrix]
-        Sandbox --> Pack[📦 1-Click Vite ZIP Packager]
-    end
+    WebUI[💻 DSH WebUI BetterSidebar Tab]:::ui
+    EditorDrawer[📝 Split-View Code Editor Drawer]:::ui
+    BlocksModal[✨ Curated Design Blocks Library]:::ui
+    Storybook[🧩 Storybook UI Kit Matrix Generator]:::ui
 
-    subgraph WebUI [DSH Canvas Sidepanel]
-        SSE --> Panel[Live Interactive Preview]
-        Inspector --> Agent
-        Diff --> Panel
-        Matrix --> Panel
-    end
+    SandboxFrame[🛡️ Sandboxed Iframe Preview]:::sandbox
+    WYSIWYG[✏️ Double-Click Inline WYSIWYG Editor]:::sandbox
+    StyleTweaker[🎛️ Floating Tailwind Style Tweaker]:::sandbox
+    DnD[↕️ Drag & Drop Section Reordering]:::sandbox
 
-    style AgentLoop fill:#1e1e2e,stroke:#89b4fa,stroke-width:2px,color:#cdd6f4
-    style CanvasCore fill:#181825,stroke:#cba6f7,stroke-width:2px,color:#cdd6f4
-    style Features fill:#11111b,stroke:#a6e3a1,stroke-width:2px,color:#cdd6f4
-    style WebUI fill:#181825,stroke:#f38ba8,stroke-width:2px,color:#cdd6f4
+    Agent -->|live_canvas_preview / tools| Store
+    Watcher -->|Auto file sync| Store
+    Store --> Bundler
+    Bundler --> SandboxFrame
+    StaticAsset --> SandboxFrame
+
+    WebUI --> EditorDrawer
+    WebUI --> BlocksModal
+    WebUI --> Storybook
+    WebUI --> SandboxFrame
+
+    SandboxFrame --> WYSIWYG
+    SandboxFrame --> StyleTweaker
+    SandboxFrame --> DnD
+    WYSIWYG -->|POST /api/save-content| Watcher
+    DnD -->|POST /api/save-reorder| Watcher
 ```
 
 ---
 
-## ✨ Key Capabilities & Studio Features
+## ✨ Full Feature Breakdown
 
-### 1. 🎨 Multi-Format Live Rendering
-* **React 18 JSX/TSX**: In-browser Babel transpilation with React Error Boundaries and state persistence.
-* **HTML + Tailwind CSS + Lucide Icons**: Instant compilation with Tailwind JIT CDN and icon substitution.
-* **SVG Vector Art**: Clean SVG renderer with transparency checkerboard and zoom controls.
-* **Mermaid & Markdown**: Live architectural diagrams (Flowcharts, Sequences) and GitHub Flavored Markdown.
+### 1. Multi-File ESM Bundler (`lib/transpiler.js`)
+- Recursively resolves relative local imports (`./Header.jsx`, `./components/Card.tsx`, `./data.js`, `./styles.css`).
+- Inlines child modules into an isolated Babel template and serves local image assets safely via `GET /dsh-live-canvas/assets/*`.
 
-### 2. 🔍 Interactive DOM Click Inspector (`live_canvas_inspect`)
-Allows agents and users to hover over and click any rendered element to capture:
-* Exact CSS selector hierarchy and XPath;
-* Computed styles, dimensions, colors, and layout properties;
-* Immediate feedback loop for agent self-correction.
+### 2. Split-View Code Editor Drawer (`lib/client.js`)
+- Toggle with **`💻 Code`** button in the top toolbar.
+- Provides a collapsible side-by-side monospace code editor with live syntax view.
+- Bi-directional synchronization: edits in the code drawer hot-reload the canvas in real time; selecting elements in the Inspector highlights matching code sections.
 
-### 3. 🌓 Visual Diff & Slider (`live_canvas_diff`)
-Side-by-side comparison or interactive wipe slider between UI revisions, allowing instant visual regression checks.
+### 3. Component Storybook & UI Kit Matrix (`lib/storybook.js`)
+- Toggle with **`🧩 UI Kit`** button or execute agent tool `live_canvas_storybook`.
+- Scans all `.jsx`, `.tsx`, and `.vue` components across the active workspace and builds a multi-variant side-by-side gallery showing component states.
 
-### 4. 📱 Multi-Device Viewport Matrix (`live_canvas_matrix`)
-Simultaneous multi-screen rendering across Mobile (iPhone/Pixel), Tablet (iPad), and Desktop viewports for responsive design verification.
+### 4. Drag & Drop Visual Section Reordering (`lib/sandbox.js`)
+- Toggle with **`↕️ D&D`** button in the toolbar.
+- Allows intuitive dragging of `<section>`, `<header>`, `<footer>`, `<nav>`, and `.card` containers.
+- Reordered DOM structure is automatically synced and persisted to disk via `POST /dsh-live-canvas/api/save-reorder`.
 
-### 5. 📦 1-Click Standalone Vite ZIP Packager (`live_canvas_pack`)
-Packages the currently previewed component into a production-ready **Vite + React / Vue + TypeScript** project ZIP archive with `package.json`, `vite.config.ts`, and Tailwind configuration ready for `npm run dev`.
+### 5. Curated High-End UI Blocks Library (`lib/templates.js`)
+- Access via **`✨ Blocks`** modal in the toolbar or agent tool `live_canvas_insert_block`.
+- Built-in library of agency-grade dark mode design blocks:
+  - **Glowing Mesh Agency Hero**: Radiant gradient blur aura, badge pill, dual CTAs.
+  - **Glassmorphic Bento Grid**: Asymmetric feature cards with glowing borders.
+  - **SaaS 3-Tier Pricing Table**: Transparent dark cards with featured badge and checkmarks.
+  - **Modern Dark FAQ Accordion**: Expandable smooth-transition question items.
+  - **Minimalist Agency Footer**: Sleek dark footer with social links and system status indicator.
+
+### 6. Inline WYSIWYG & Floating Style Tweaker (`lib/sandbox.js`)
+- **Double-Click Edit**: Double-click any heading, paragraph, or label on canvas to edit text in place; hit <kbd>Enter</kbd> to persist changes to source files on disk.
+- **Style Tweaker Bar**: Click elements with Inspector enabled to tweak Tailwind colors, padding, rounding, and shadow presets with instant disk sync.
+
+### 7. Multi-Device Matrix & Visual Diff Slider
+- **Responsive Breakpoints**: Instant toggle between Responsive, Mobile (375px), Tablet (768px), and Multi-Device Matrix with synchronized scrolling.
+- **Visual Diff Slider**: Side-by-side comparative split slider to review regressions across version snapshots.
+
+### 8. 1-Click Vite Project Export (`lib/packager.js`)
+- Instant ZIP download or disk export of complete production-ready projects configured with `vite.config.js`, `package.json`, `tailwind.config.js`, and entrypoints.
 
 ---
 
-## 🛠️ Complete Agent Tools Reference (13 Tools)
+## 🛠️ Complete Agent Tools Reference (17 Tools)
 
-| Tool Name | Parameters | Description |
+| Tool Name | Purpose | Output / Action |
 |---|---|---|
-| `live_canvas_preview` | `code`, `format`, `title` | Renders or updates active canvas preview (HTML, React, SVG, Mermaid, Markdown) |
-| `live_canvas_inspect` | `selector` | Inspects DOM elements, computed styles, and layout geometry |
-| `live_canvas_reload` | `preserveState` | Triggers immediate SSE hot-reload of the preview sandbox |
-| `live_canvas_diagnose` | `limit` | Fetches runtime sandbox console errors, uncaught exceptions, and telemetry |
-| `live_canvas_export` | `format` | Generates a single-file standalone HTML bundle with inlined assets |
-| `live_canvas_annotations`| `items` | Overlays visual highlight boxes and comment pins directly onto the rendered UI |
-| `live_canvas_gallery` | `stories` | Renders a multi-component Storybook-style design system gallery |
-| `live_canvas_watch` | `path`, `glob` | Monitors workspace files for automatic HMR refreshes |
-| `live_canvas_controls` | `props` | Generates interactive control sliders and inputs for dynamic prop tuning |
-| `live_canvas_diff` | `baseCode`, `newCode` | Renders side-by-side visual diff slider |
-| `live_canvas_matrix` | `devices` | Generates multi-viewport responsive preview grid |
-| `live_canvas_mock` | `schema` | Generates realistic mock data payloads for UI components |
-| `live_canvas_pack` | `projectName` | Builds and downloads a standalone Vite + React / TS project ZIP archive |
+| `live_canvas_preview` | Render or update preview session for HTML/React/SVG/Mermaid | `previewUrl`, `canvasId` |
+| `live_canvas_inspect` | Retrieve user DOM clicks, CSS selectors, and attributes | `inspections: [...]` |
+| `live_canvas_reload` | Force instant SSE reload on open preview windows | Hot-reload broadcast |
+| `live_canvas_diagnose` | Query sandbox console errors and exceptions for self-healing | `logs: [...]`, `hasErrors` |
+| `live_canvas_export` | Export standalone zero-dependency HTML bundle | `downloadUrl`, `savedPath` |
+| `live_canvas_annotations` | Fetch or clear boxed visual markup and comments | `annotations: [...]` |
+| `live_canvas_gallery` | Create multi-variant Storybook comparison matrix | `variantsCount`, `previewUrl` |
+| `live_canvas_watch` | Scan and bind workspace files to live file watcher | `files: [...]`, `watchedFiles` |
+| `live_canvas_controls` | Update Storybook-style interactive props sliders | `values: {...}` |
+| `live_canvas_diff` | Visual split slider comparing two session snapshots | `diffUrl`, `snapshotCount` |
+| `live_canvas_matrix` | Multi-device viewport matrix (Mobile, Tablet, Desktop) | `matrixUrl` |
+| `live_canvas_mock` | Set up intercepted REST API mock routes in preview frame | `endpointsCount`, `mockData` |
+| `live_canvas_pack` | 1-Click Vite+React or Vite+Vue project ZIP bundle packager | `downloadUrl`, `writtenDir` |
+| `live_canvas_refine_element` | Target AI visual/structural refinement to a DOM element | Canvas hot-reload |
+| `live_canvas_storybook` | Auto-scan workspace components and create UI Kit gallery | `galleryUrl`, `componentsCount` |
+| `live_canvas_insert_block` | Insert curated design block (Hero, Bento, Pricing, FAQ, Footer) | `blockId`, `title` |
+| `live_canvas_vision_import`| Convert image screenshot / mockup into interactive canvas | `previewUrl`, `framework` |
 
 ---
 
-## 📦 Quick Installation
+## 📦 Installation
+
+Install into your DeepSeek Harness profile with one command:
 
 ```bash
 dsh plugin --profile web add @goodandready/dsh-live-canvas
 ```
 
-> [!IMPORTANT]
-> Restart DSH Web UI after installation (`systemctl --user restart dsh-web`) and open any conversation to view the Live Canvas sidebar.
-
 ---
 
-## ⚙️ Configuration Reference (`settings.yaml`)
+## ⚙️ Configuration (`settings.yaml`)
 
 ```yaml
-dsh-live-canvas:
-  enabled: true
-  autoOpenOnCode: true
-  enableInspector: true
-  enableHotReload: true
-  defaultTheme: dark
-  maxBundleSizeBytes: 5242880
+plugins:
+  "@goodandready/dsh-live-canvas":
+    defaultViewport: "responsive" # Options: responsive, mobile, tablet, matrix
+    autoOpenOnHtmlGen: true       # Auto-open Live Canvas tab upon UI generation
+    enableHotReload: true         # Enable SSE hot-reload on session code updates
+    maxSessionCache: 50           # Maximum active preview sessions in LRU memory
+    enableFileWatcher: true       # Enable filesystem watcher for live code sync
+    workspaceDir: ""              # Custom workspace directory (defaults to cwd)
 ```
 
 ---
@@ -138,3 +176,4 @@ dsh-live-canvas:
 ## 📄 License
 
 MIT © [GooDAnDReaDY](https://github.com/GooDAnDReaDY)
+
