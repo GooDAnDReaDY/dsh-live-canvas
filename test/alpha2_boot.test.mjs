@@ -44,6 +44,10 @@ test('client entry can be initialized with alpha2 context dependencies without r
   // Mock alpha2 context
   const registeredSlots = [];
   const registeredLocales = [];
+  let betterSidebarCallCount = 0;
+  let tabDisposed = false;
+  let viewerDisposed = false;
+
   const mockCtx = {
     locale: {
       register: (ns, dict) => registeredLocales.push({ ns, dict }),
@@ -58,10 +62,11 @@ test('client entry can be initialized with alpha2 context dependencies without r
     },
     inject: (deps, cb) => {
       if (deps.includes('betterSidebar')) {
-        cb({
+        betterSidebarCallCount++;
+        return cb({
           betterSidebar: {
-            registerTab: () => () => {},
-            registerFileViewer: () => () => {}
+            registerTab: () => () => { tabDisposed = true; },
+            registerFileViewer: () => () => { viewerDisposed = true; }
           },
           locale: { getSnapshot: () => ({ active: 'en' }) }
         });
@@ -74,4 +79,59 @@ test('client entry can be initialized with alpha2 context dependencies without r
   loadedExport.apply(mockCtx);
   assert.ok(registeredSlots.length > 0, 'Settings slot must be registered');
   assert.ok(registeredLocales.length > 0, 'Locale dictionary must be registered');
+  assert.equal(betterSidebarCallCount, 1, 'betterSidebar should be injected exactly once via ctx.inject');
+});
+
+test('registerBetterSidebar is declaration-safe and returns cleanup disposers', async () => {
+  let loadedExport = null;
+  globalThis.window = {
+    __ModuleLoader__: {
+      load: ({ id, factory }) => {
+        const require = (name) => {
+          if (name === 'react') {
+            return {
+              createElement: (type, props, ...children) => ({ type, props, children }),
+              useState: (init) => [init, () => {}],
+              useEffect: () => {},
+              useRef: () => ({ current: null }),
+              useMemo: (fn) => fn()
+            };
+          }
+          return {};
+        };
+        loadedExport = factory(require);
+      }
+    }
+  };
+
+  await import('../lib/client.js?alpha2_disposer=' + Date.now());
+
+  let registeredTabs = [];
+  let registeredViewers = [];
+  let unregTabCalled = false;
+  let unregViewerCalled = false;
+
+  const mockCtx = {
+    betterSidebar: {
+      registerTab: (desc) => {
+        registeredTabs.push(desc);
+        return () => { unregTabCalled = true; };
+      },
+      registerFileViewer: (desc) => {
+        registeredViewers.push(desc);
+        return () => { unregViewerCalled = true; };
+      }
+    },
+    locale: { getSnapshot: () => ({ active: 'en' }) }
+  };
+
+  assert.ok(loadedExport, 'Client export must be loaded');
+  const disposer = loadedExport.registerBetterSidebar(mockCtx);
+  assert.equal(registeredTabs.length, 1);
+  assert.equal(registeredViewers.length, 1);
+  assert.equal(typeof disposer, 'function', 'registerBetterSidebar must return a disposer function');
+
+  disposer();
+  assert.equal(unregTabCalled, true, 'Tab registration disposer must be called on cleanup');
+  assert.equal(unregViewerCalled, true, 'File viewer registration disposer must be called on cleanup');
 });
