@@ -38,7 +38,7 @@ test('Plugin exports correct metadata and schema', () => {
   assert.ok(Config);
 });
 
-test('Plugin lifecycle applies routes and handles sandbox, API, diff, matrix, mock, and export endpoints', async () => {
+test('Plugin lifecycle applies routes and handles sandbox, API, diff, matrix, mock, pack, and export endpoints', async () => {
   const routes = [];
   const tools = [];
   let registeredSettings = null;
@@ -89,22 +89,19 @@ test('Plugin lifecycle applies routes and handles sandbox, API, diff, matrix, mo
   });
 
   assert.equal(registeredSettings.ns, '@goodandready/dsh-live-canvas');
-  assert.equal(tools.length, 12); // preview, inspect, reload, diagnose, export, annotations, gallery, watch, controls, diff, matrix, mock
+  assert.equal(tools.length, 13); // preview, inspect, reload, diagnose, export, annotations, gallery, watch, controls, diff, matrix, mock, pack
   assert.equal(routes.length, 5); // events, sandbox, diff, matrix, api
 
-  const sandboxRoute = routes.find(r => r.path === '/dsh-live-canvas/sandbox');
   const apiRoute = routes.find(r => r.path === '/dsh-live-canvas/api');
-  assert.ok(sandboxRoute, 'Sandbox route should be registered');
   assert.ok(apiRoute, 'API route should be registered');
 
   // Test 1: POST /dsh-live-canvas/api/preview
   const postPrev = createMockReqRes({ url: '/dsh-live-canvas/api/preview', method: 'POST' });
   const postPromise = apiRoute.handler(postPrev.req, postPrev.res);
   postPrev.req.emit('data', JSON.stringify({
-    title: 'Mock Test',
-    content: '<div class="banner">Hello Mock</div>',
-    componentType: 'html',
-    mockData: { '/api/hello': { message: 'world' } }
+    title: 'Pack Test',
+    content: '<div class="banner">Hello Pack</div>',
+    componentType: 'html'
   }));
   postPrev.req.emit('end');
   await postPromise;
@@ -114,12 +111,12 @@ test('Plugin lifecycle applies routes and handles sandbox, API, diff, matrix, mo
   assert.equal(prevData.success, true);
   assert.ok(prevData.canvasId);
 
-  // Test 2: GET /dsh-live-canvas/api/mock?canvasId=...
-  const getMock = createMockReqRes({ url: `/dsh-live-canvas/api/mock?canvasId=${prevData.canvasId}`, method: 'GET' });
-  await apiRoute.handler(getMock.req, getMock.res);
-  assert.equal(getMock.res.statusCode, 200);
-  const mockResp = JSON.parse(getMock.res.body);
-  assert.deepEqual(mockResp.mockData, { '/api/hello': { message: 'world' } });
+  // Test 2: GET /dsh-live-canvas/api/pack/<id>
+  const getPack = createMockReqRes({ url: `/dsh-live-canvas/api/pack/${prevData.canvasId}`, method: 'GET' });
+  await apiRoute.handler(getPack.req, getPack.res);
+  assert.equal(getPack.res.statusCode, 200);
+  assert.equal(getPack.res.headers['Content-Type'], 'application/zip');
+  assert.ok(getPack.res.body.length > 0);
 
   for (const cleanup of effects) {
     if (typeof cleanup === 'function') cleanup();
