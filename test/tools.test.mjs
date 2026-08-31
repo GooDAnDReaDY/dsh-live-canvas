@@ -38,6 +38,7 @@ test('registerLiveCanvasTools registers all thirteen agent tools', async () => {
   const matrixTool = ctx._getTool('live_canvas_matrix');
   const mockTool = ctx._getTool('live_canvas_mock');
   const packTool = ctx._getTool('live_canvas_pack');
+  const refineTool = ctx._getTool('live_canvas_refine_element');
 
   assert.ok(previewTool, 'live_canvas_preview tool should be registered');
   assert.ok(inspectTool, 'live_canvas_inspect tool should be registered');
@@ -52,6 +53,7 @@ test('registerLiveCanvasTools registers all thirteen agent tools', async () => {
   assert.ok(matrixTool, 'live_canvas_matrix tool should be registered');
   assert.ok(mockTool, 'live_canvas_mock tool should be registered');
   assert.ok(packTool, 'live_canvas_pack tool should be registered');
+  assert.ok(refineTool, 'live_canvas_refine_element tool should be registered');
 
   eventHub.closeAll();
 });
