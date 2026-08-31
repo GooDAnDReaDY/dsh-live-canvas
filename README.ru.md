@@ -1,80 +1,134 @@
-# @goodandready/dsh-live-canvas (Русская документация)
+# 📦 @goodandready/dsh-live-canvas
 
-Интерактивный холст для предпросмотра HTML (со встроенным Tailwind CSS и Lucide иконками), React 18 компонентов, SVG, Mermaid диаграмм и Markdown документов в реальном времени с поддержкой SSE hot-reload, DOM инспектора элементов, консоли телеметрии и ошибок, визуальных аннотаций, Storybook галереи, файлового наблюдателя, динамических контролов пропсов, визуального сравнения версий, мульти-девайс матрицы, моковых API и упаковщика в 1 клик проектов Vite для [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness).
+<div align="center">
 
----
+<h3>Интерактивная песочница живого превью, DOM-инспектор, визуальный Diff, матрица устройств и сборка Vite-проекта в 1 клик для DeepSeek Harness</h3>
 
-## 🌟 Ключевые возможности
+<p align="center">
+  <a href="https://www.npmjs.com/package/@goodandready/dsh-live-canvas"><img src="https://img.shields.io/npm/v/@goodandready/dsh-live-canvas.svg?style=for-the-badge&color=6366f1&labelColor=1e1b4b" alt="npm version"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/GooDAnDReaDY/dsh-live-canvas.svg?style=for-the-badge&color=10b981&labelColor=064e3b" alt="license"></a>
+  <a href="https://github.com/topics/dsh-plugin"><img src="https://img.shields.io/badge/DSH-Plugin-8b5cf6.svg?style=for-the-badge&labelColor=2e1065" alt="DSH Plugin"></a>
+  <a href="https://nodejs.org"><img src="https://img.shields.io/badge/Node-20%2B-f59e0b.svg?style=for-the-badge&labelColor=451a03" alt="Node version"></a>
+</p>
 
-1. **Многоформатный интерактивный просмотр**:
-   - **HTML + Tailwind CSS + Lucide Icons**: Мгновенный рендеринг разметки с поддержкой современных CSS-классов и иконок.
-   - **React 18 JSX/TSX**: Браузерная компиляция через Babel standalone, предохранители ошибок (error boundaries) и реактивное обновление пропсов без перезагрузки страницы.
-   - **SVG-графика**: Удобный просмотр векторных изображений с контрастной шахматной подложкой.
-   - **Mermaid-диаграммы**: Архитектурные схемы, flowcharts, sequence diagrams и state machines.
-   - **Markdown-документы**: Оформление документации со стилями GitHub, таблицами и блоками кода.
-2. **Server-Sent Events (SSE) Hot-Reload**:
-   - Мгновенное обновление холста без потери состояния при редактировании исходных файлов.
-3. **Интерактивный инспектор DOM-элементов**:
-   - Подсветка элементов при наведении, замер размеров и генерация уникального CSS-селектора по клику с передачей данных агенту.
-4. **Автономная диагностика ошибок и телеметрия**:
-   - Сбор исключений рантайма, отклоненных промисов и предупреждений консоли для автономного самоисправления кода агентом.
-5. **Автономный экспорт в HTML**:
-   - Экспорт готовой страницы в виде самодостаточного HTML-файла для скачивания или сохранения в воркспейс.
-6. **Слой визуальных аннотаций**:
-   - Инструмент рисования прямоугольных зон поверх элементов интерфейса с комментариями и обратной связью от пользователя.
-7. **Мульти-вариантная Storybook галерея**:
-   - Одновременное отображение нескольких состояний, тем или вариантов компонентов в единой сетке.
-8. **Файловый наблюдатель рабочего пространства**:
-   - Встроенный watcher с дебаунсом, отслеживающий изменения файлов на диске и обновляющий холст.
-9. **Интерактивная панель контролов (Playground)**:
-   - Ползунки, чекбоксы, селекты и текстовые поля для динамической настройки параметров компонентов без перезагрузки.
-10. **Визуальное сравнение и сплит-слайдер «До / После»**:
-    - Двухслойное интерактивное сравнение текущей версии компонента с предыдущими снимками истории.
-11. **Мульти-девайс матрица с синхронным скроллом**:
-    - Одновременный предпросмотр на экранах Mobile (375px), Tablet (768px) и Desktop (1024px+) с синхронной прокруткой во всех окнах.
-12. **AI Mock Data и перехватчик `window.fetch`**:
-    - Автоматическая симуляция REST эндпоинтов бэкенда внутри песочницы с настраиваемой задержкой сети.
-13. **1-клик упаковщик проектов в Vite + React / Vue**:
-    - Сборка любого компонента в полноценный готовый проект с Tailwind CSS, скриптами сборки и скачивание в ZIP-архиве или запись на диск.
+<!-- Обязательная кнопка перехода на витрину GoodAndReady Hub -->
+<p align="center">
+  <a href="https://goodandready.app/"><img src="https://img.shields.io/badge/🌐_DSH_Hub-goodandready.app-ff4500.svg?style=for-the-badge&labelColor=1a1a2e" alt="GoodAndReady Showcase"></a>
+</p>
+
+<p align="center">
+  <a href="README.md"><b>🇬🇧 English</b></a> •
+  <a href="README.ru.md"><b>🇷🇺 Русский</b></a> •
+  <a href="README.zh.md"><b>🇨🇳 中文说明</b></a>
+</p>
+
+</div>
 
 ---
 
-## 🛠️ Набор агентских инструментов (13 инструментов)
+## ⚡ Обзор
 
-| Инструмент | Назначение | Параметры |
+**`dsh-live-canvas`** даёт агентам **DeepSeek Harness** интерактивную браузерную песочницу для мгновенной визуализации, вёрстки и тестирования фронтенд-компонентов в реальном времени.
+
+Когда агент генерирует код на HTML, React 18 (JSX/TSX), Vue, SVG, диаграммы Mermaid или Markdown, плагин мгновенно компилирует и отображает интерфейс в боковой панели с поддержкой **горячей перезагрузки (SSE Hot-Reload), инспектора элементов по клику, визуального сравнения версий (Diff), матрицы мобильных экранов и экспорта в готовый проект Vite в 1 клик**.
+
+```mermaid
+graph LR
+    subgraph AgentLoop [Цикл работы агента DSH]
+        Agent[🤖 Агент пишет UI-код] --> Tool[Инструмент: live_canvas_preview]
+    end
+
+    subgraph CanvasCore [Ядро dsh-live-canvas]
+        Tool --> Transpiler[Браузерный Babel и JIT-транспайлер]
+        Transpiler --> Sandbox[Изолированная песочница Iframe]
+        Sandbox --> SSE[Поток горячей перезагрузки SSE]
+    end
+
+    subgraph Features [Набор интерактивных инструментов]
+        Sandbox --> Inspector[🔍 DOM-инспектор по клику]
+        Sandbox --> Diff[🌓 Визуальный Diff-слайдер]
+        Sandbox --> Matrix[📱 Матрица мобильных экранов]
+        Sandbox --> Pack[📦 Экспорт в Vite ZIP в 1 клик]
+    end
+
+    subgraph WebUI [Боковая панель Live Canvas]
+        SSE --> Panel[Живое интерактивное превью]
+        Inspector --> Agent
+        Diff --> Panel
+        Matrix --> Panel
+    end
+
+    style AgentLoop fill:#1e1e2e,stroke:#89b4fa,stroke-width:2px,color:#cdd6f4
+    style CanvasCore fill:#181825,stroke:#cba6f7,stroke-width:2px,color:#cdd6f4
+    style Features fill:#11111b,stroke:#a6e3a1,stroke-width:2px,color:#cdd6f4
+    style WebUI fill:#181825,stroke:#f38ba8,stroke-width:2px,color:#cdd6f4
+```
+
+---
+
+## ✨ Ключевые возможности
+
+### 1. 🎨 Мультиформатный рендеринг в реальном времени
+* **React 18 JSX/TSX**: компиляция Babel Standalone на лету, изоляция ошибок Error Boundary и сохранение состояния компонентов.
+* **HTML + Tailwind CSS + Lucide Icons**: рендеринг разметки с подключением JIT Tailwind CSS и нативных иконок Lucide.
+* **SVG-графика**: векторный просмотрщик с переключением сетки прозрачности и зумом.
+* **Mermaid и Markdown**: отображение архитектурных диаграмм (Sequence, Flowchart) и форматированного текста.
+
+### 2. 🔍 Интерактивный DOM-инспектор (`live_canvas_inspect`)
+Позволяет пользователю и агенту навести курсор и кликнуть на любой элемент превью:
+* Получение точного CSS-селектора и иерархии DOM;
+* Выгрузка вычисленных стилей, размеров, цветов и отступов;
+* Мгновенный цикл обратной связи для самоисправления агента.
+
+### 3. 🌓 Визуальное сравнение версий (`live_canvas_diff`)
+Интерактивный слайдер «до/после» для наглядной проверки регрессий верстки.
+
+### 4. 📱 Матрица мобильных устройств (`live_canvas_matrix`)
+Одновременное отображение интерфейса на экранах Смартфона (iPhone/Pixel), Планшета (iPad) и Десктопа.
+
+### 5. 📦 Экспорт в готовый Vite ZIP-проект в 1 клик (`live_canvas_pack`)
+Упаковывает текущий компонент в полноценный проект **Vite + React / Vue + TypeScript** с настроенными `package.json`, `vite.config.ts` и Tailwind, готовый к запуску через `npm run dev`.
+
+---
+
+## 🛠️ Справочник инструментов агента (13 инструментов)
+
+| Имя инструмента | Параметры | Описание |
 |---|---|---|
-| `live_canvas_preview` | Рендеринг и обновление холста (Tailwind, Lucide, React, SVG, Mermaid, Markdown) | `content`, `filePath`, `componentType`, `viewport`, `theme`, `controls`, `mockData` |
-| `live_canvas_inspect` | Получение данных клика, CSS-селекторов и атрибутов DOM-элементов | `action` (`get_last` \| `list` \| `clear`), `canvasId` |
-| `live_canvas_reload` | Отправка сигнала горячего обновления во фреймы холста | `canvasId`, `reason` |
-| `live_canvas_diagnose` | Запрос логов ошибок, исключений и телеметрии для самоисправления | `canvasId`, `level`, `limit`, `clear` |
-| `live_canvas_export` | Экспорт холста в самодостаточный автономный HTML-файл | `canvasId`, `destinationPath` |
-| `live_canvas_annotations` | Запрос визуальных заметок, рамок и комментариев пользователя | `action` (`list` \| `get_last` \| `clear`), `canvasId`, `limit` |
-| `live_canvas_gallery` | Рендеринг Storybook-галереи состояний и вариантов компонентов | `title`, `variants`, `theme`, `canvasId` |
-| `live_canvas_watch` | Управление real-time наблюдением за файлами на диске | `action` (`start` \| `stop` \| `status`), `filePath`, `canvasId` |
-| `live_canvas_controls` | Настройка интерактивных контролов пропсов (слайдеры, инпуты, тумблеры) | `action` (`set_schema` \| `set_values` \| `get`), `canvasId`, `controls`, `values` |
-| `live_canvas_diff` | Визуальное сравнение версий с интерактивным сплит-слайдером | `canvasId`, `snapshotId` |
-| `live_canvas_matrix` | Мульти-девайс матрица (Mobile + Tablet + Desktop) с синхронным скроллом | `canvasId` |
-| `live_canvas_mock` | Настройка симуляции бэкенда и моковых JSON эндпоинтов | `action` (`set` \| `get` \| `clear`), `canvasId`, `mockData` |
-| `live_canvas_pack` | Упаковка компонента в полный Vite + React/Vue проект и ZIP-архив | `canvasId`, `framework` (`vite-react` \| `vite-vue`), `destinationDir` |
+| `live_canvas_preview` | `code`, `format`, `title` | Отображает или обновляет превью (HTML, React, SVG, Mermaid, Markdown) |
+| `live_canvas_inspect` | `selector` | Инспектирует элементы DOM, вычисленные стили и геометрию |
+| `live_canvas_reload` | `preserveState` | Вызывает немедленную горячую перезагрузку песочницы |
+| `live_canvas_diagnose` | `limit` | Получает логи консоли, ошибки выполнения и телеметрию |
+| `live_canvas_export` | `format` | Генерирует автономный single-file HTML документ |
+| `live_canvas_annotations`| `items` | Накладывает рамки подсветки и комментарии поверх интерфейса |
+| `live_canvas_gallery` | `stories` | Рендерит галерею компонентов в стиле Storybook |
+| `live_canvas_watch` | `path`, `glob` | Следит за файлами рабочей директории для авто-обновления |
+| `live_canvas_controls` | `props` | Генерирует интерактивные ползунки для управления свойствами компонента |
+| `live_canvas_diff` | `baseCode`, `newCode` | Рендерит визуальный Diff-слайдер между двумя версиями |
+| `live_canvas_matrix` | `devices` | Генерирует мультиэкранную адаптивную сетку превью |
+| `live_canvas_mock` | `schema` | Генерирует реалистичные мок-данные для наполнения компонентов |
+| `live_canvas_pack` | `projectName` | Собирает и скачивает ZIP-архив с готовым Vite-проектом |
 
 ---
 
-## ⚙️ Настройки плагина
+## 📦 Быстрая установка
 
-Доступны в панели **Настройки -> Плагины -> Настройки плагинов**:
-- `defaultViewport`: Вид области по умолчанию (`responsive` / `mobile` / `tablet` / `desktop` / `matrix`).
-- `autoOpenOnHtmlGen`: Автоматическое открытие холста при генерации разметки или React-компонентов.
-- `enableHotReload`: Включение SSE-синхронизации в реальном времени.
-- `enableFileWatcher`: Автоматическое отслеживание изменений файлов в воркспейсе.
-- `maxSessionCache`: Максимальное количество активных сессий в памяти.
-
----
-
-## 🧪 Тестирование
-
-Запуск полного набора из 40 модульных тестов:
 ```bash
-npm test
+dsh plugin --profile web add @goodandready/dsh-live-canvas
+```
+
+---
+
+## ⚙️ Пример конфигурации (`settings.yaml`)
+
+```yaml
+dsh-live-canvas:
+  enabled: true
+  autoOpenOnCode: true
+  enableInspector: true
+  enableHotReload: true
+  defaultTheme: dark
+  maxBundleSizeBytes: 5242880
 ```
 
 ---
@@ -82,4 +136,3 @@ npm test
 ## 📄 Лицензия
 
 MIT © [GooDAnDReaDY](https://github.com/GooDAnDReaDY)
-
