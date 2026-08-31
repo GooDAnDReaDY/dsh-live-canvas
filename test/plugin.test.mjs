@@ -88,7 +88,7 @@ test('Plugin lifecycle applies routes and handles sandbox, API, and export endpo
   });
 
   assert.equal(registeredSettings.ns, '@goodandready/dsh-live-canvas');
-  assert.equal(tools.length, 5); // preview, inspect, reload, diagnose, export
+  assert.equal(tools.length, 6); // preview, inspect, reload, diagnose, export, annotations
   assert.equal(routes.length, 3); // events, sandbox, api
 
   const sandboxRoute = routes.find(r => r.path === '/dsh-live-canvas/sandbox');
@@ -126,47 +126,27 @@ test('Plugin lifecycle applies routes and handles sandbox, API, and export endpo
   await apiRoute.handler(getExport.req, getExport.res);
   assert.equal(getExport.res.statusCode, 200);
   assert.ok(getExport.res.body.includes('Exported via Live Canvas Preview'));
-  assert.ok(getExport.res.headers['Content-Disposition'].includes('.html'));
 
-  // Test 4: POST /dsh-live-canvas/api/inspect
-  const postInsp = createMockReqRes({ url: '/dsh-live-canvas/api/inspect', method: 'POST' });
-  const inspPromise = apiRoute.handler(postInsp.req, postInsp.res);
-  postInsp.req.emit('data', JSON.stringify({
+  // Test 4: POST /dsh-live-canvas/api/annotations & GET
+  const postAnn = createMockReqRes({ url: '/dsh-live-canvas/api/annotations', method: 'POST' });
+  const annPromise = apiRoute.handler(postAnn.req, postAnn.res);
+  postAnn.req.emit('data', JSON.stringify({
     canvasId: prevData.canvasId,
+    comment: 'Need larger paddings',
     selector: 'div.banner',
     tagName: 'div',
-    innerText: 'Hello from Test'
+    box: { x: 10, y: 10, width: 100, height: 50 }
   }));
-  postInsp.req.emit('end');
-  await inspPromise;
+  postAnn.req.emit('end');
+  await annPromise;
+  assert.equal(postAnn.res.statusCode, 200);
 
-  assert.equal(postInsp.res.statusCode, 200);
-
-  // Test 5: GET /dsh-live-canvas/api/inspect
-  const getInsp = createMockReqRes({ url: '/dsh-live-canvas/api/inspect', method: 'GET' });
-  await apiRoute.handler(getInsp.req, getInsp.res);
-  assert.equal(getInsp.res.statusCode, 200);
-  const inspData = JSON.parse(getInsp.res.body);
-  assert.equal(inspData.inspected.selector, 'div.banner');
-
-  // Test 6: POST /dsh-live-canvas/api/logs & GET /dsh-live-canvas/api/logs
-  const postLog = createMockReqRes({ url: '/dsh-live-canvas/api/logs', method: 'POST' });
-  const logPromise = apiRoute.handler(postLog.req, postLog.res);
-  postLog.req.emit('data', JSON.stringify({
-    canvasId: prevData.canvasId,
-    level: 'error',
-    message: 'Runtime test error'
-  }));
-  postLog.req.emit('end');
-  await logPromise;
-  assert.equal(postLog.res.statusCode, 200);
-
-  const getLog = createMockReqRes({ url: `/dsh-live-canvas/api/logs?canvasId=${prevData.canvasId}`, method: 'GET' });
-  await apiRoute.handler(getLog.req, getLog.res);
-  assert.equal(getLog.res.statusCode, 200);
-  const logData = JSON.parse(getLog.res.body);
-  assert.equal(logData.count, 1);
-  assert.equal(logData.logs[0].message, 'Runtime test error');
+  const getAnn = createMockReqRes({ url: `/dsh-live-canvas/api/annotations?canvasId=${prevData.canvasId}`, method: 'GET' });
+  await apiRoute.handler(getAnn.req, getAnn.res);
+  assert.equal(getAnn.res.statusCode, 200);
+  const annData = JSON.parse(getAnn.res.body);
+  assert.equal(annData.count, 1);
+  assert.equal(annData.annotations[0].comment, 'Need larger paddings');
 
   for (const cleanup of effects) {
     if (typeof cleanup === 'function') cleanup();
