@@ -88,7 +88,7 @@ test('Plugin lifecycle applies routes and handles sandbox, API, and export endpo
   });
 
   assert.equal(registeredSettings.ns, '@goodandready/dsh-live-canvas');
-  assert.equal(tools.length, 6); // preview, inspect, reload, diagnose, export, annotations
+  assert.equal(tools.length, 7); // preview, inspect, reload, diagnose, export, annotations, gallery
   assert.equal(routes.length, 3); // events, sandbox, api
 
   const sandboxRoute = routes.find(r => r.path === '/dsh-live-canvas/sandbox');

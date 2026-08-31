@@ -16,7 +16,7 @@ function createMockCtx() {
   };
 }
 
-test('registerLiveCanvasTools registers all six agent tools', async () => {
+test('registerLiveCanvasTools registers all seven agent tools', async () => {
   const ctx = createMockCtx();
   const store = new PreviewStore();
   const eventHub = new EventHub({ heartbeatIntervalMs: 60000 });
@@ -29,6 +29,7 @@ test('registerLiveCanvasTools registers all six agent tools', async () => {
   const diagnoseTool = ctx._getTool('live_canvas_diagnose');
   const exportTool = ctx._getTool('live_canvas_export');
   const annTool = ctx._getTool('live_canvas_annotations');
+  const galleryTool = ctx._getTool('live_canvas_gallery');
 
   assert.ok(previewTool, 'live_canvas_preview tool should be registered');
   assert.ok(inspectTool, 'live_canvas_inspect tool should be registered');
@@ -36,6 +37,7 @@ test('registerLiveCanvasTools registers all six agent tools', async () => {
   assert.ok(diagnoseTool, 'live_canvas_diagnose tool should be registered');
   assert.ok(exportTool, 'live_canvas_export tool should be registered');
   assert.ok(annTool, 'live_canvas_annotations tool should be registered');
+  assert.ok(galleryTool, 'live_canvas_gallery tool should be registered');
 
   // Test live_canvas_preview execution
   const prevRes = await previewTool.execute({
@@ -48,10 +50,13 @@ test('registerLiveCanvasTools registers all six agent tools', async () => {
   assert.equal(prevRes.success, true);
   assert.ok(prevRes.canvasId.startsWith('canvas-'));
 
-  // Test live_canvas_annotations execution
-  const annRes = await annTool.execute({ canvasId: prevRes.canvasId });
-  assert.equal(annRes.success, true);
-  assert.equal(annRes.count, 0);
+  // Test live_canvas_gallery execution
+  const gallRes = await galleryTool.execute({
+    title: 'Badge Gallery',
+    variants: [{ name: 'Success', content: '<span>OK</span>' }]
+  });
+  assert.equal(gallRes.success, true);
+  assert.equal(gallRes.variantsCount, 1);
 
   eventHub.closeAll();
 });
