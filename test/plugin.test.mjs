@@ -31,7 +31,7 @@ function createMockReqRes(options = {}) {
 }
 
 test('Plugin exports correct metadata and schema', () => {
-  assert.equal(name, '@goodandready-private/dsh-live-canvas');
+  assert.equal(name, '@goodandready/dsh-live-canvas');
   assert.ok(inject.includes('tools'));
   assert.ok(inject.includes('settings'));
   assert.ok(inject.includes('webServer'));
@@ -87,7 +87,7 @@ test('Plugin lifecycle applies routes and handles sandbox and API endpoints', as
     maxSessionCache: 50
   });
 
-  assert.equal(registeredSettings.ns, '@goodandready-private/dsh-live-canvas');
+  assert.equal(registeredSettings.ns, '@goodandready/dsh-live-canvas');
   assert.equal(tools.length, 3);
   assert.equal(routes.length, 3); // events, sandbox, api
 

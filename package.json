@@ -1,7 +1,7 @@
 {
-  "name": "@goodandready-private/dsh-live-canvas",
+  "name": "@goodandready/dsh-live-canvas",
   "version": "0.1.0",
-  "description": "DSH plugin for interactive real-time browser preview of artifacts and UI components",
+  "description": "Interactive in-browser canvas for real-time preview of HTML, React components, SVGs, and diagrams with SSE hot-reload",
   "type": "module",
   "main": "lib/index.js",
   "exports": {
@@ -22,19 +22,21 @@
   "keywords": [
     "dsh",
     "dsh-plugin",
+    "deepseek-harness",
     "canvas",
     "preview",
     "hot-reload",
     "react",
-    "html"
+    "html",
+    "mermaid"
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/goodandready-private/dsh-live-canvas.git"
+    "url": "git+https://github.com/GooDAnDReaDY/dsh-live-canvas.git"
   },
-  "homepage": "https://github.com/goodandready-private/dsh-live-canvas#readme",
+  "homepage": "https://github.com/GooDAnDReaDY/dsh-live-canvas#readme",
   "bugs": {
-    "url": "https://github.com/goodandready-private/dsh-live-canvas/issues"
+    "url": "https://github.com/GooDAnDReaDY/dsh-live-canvas/issues"
   },
   "license": "MIT",
   "dsh": {
@@ -51,13 +53,29 @@
   },
   "peerDependencies": {
     "@deepseek-ai/cordis": "^4.0.1",
-    "@deepseek-ai/dsh-credentials": "^0.1.0-rc.6",
-    "@deepseek-ai/dsh-host-webserver": "^0.1.0-rc.6",
-    "@deepseek-ai/dsh-settings": "^0.1.0-rc.6",
-    "@deepseek-ai/dsh-tools": "^0.1.0-rc.6",
-    "@deepseek-ai/schemastery": "^3.18.1"
+    "@deepseek-ai/dsh-settings": ">=0.1.0-rc.6 <0.1.1 || >=0.1.1-rc.1 <0.1.2 || >=0.1.2-alpha.1 <1.0.0",
+    "@deepseek-ai/schemastery": "^3.18.1",
+    "@deepseek-ai/dsh-tools": ">=0.1.0-rc.6 <0.1.1 || >=0.1.1-rc.1 <0.1.2 || >=0.1.2-alpha.1 <1.0.0",
+    "@deepseek-ai/dsh-host-webserver": ">=0.1.0-rc.6 <0.1.1 || >=0.1.1-rc.1 <0.1.2 || >=0.1.2-alpha.1 <1.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@deepseek-ai/cordis": {
+      "optional": true
+    },
+    "@deepseek-ai/dsh-settings": {
+      "optional": true
+    },
+    "@deepseek-ai/schemastery": {
+      "optional": true
+    },
+    "@deepseek-ai/dsh-tools": {
+      "optional": true
+    },
+    "@deepseek-ai/dsh-host-webserver": {
+      "optional": true
+    }
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+    "access": "public"
   }
 }
