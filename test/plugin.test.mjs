@@ -88,7 +88,7 @@ test('Plugin lifecycle applies routes and handles sandbox and API endpoints', as
   });
 
   assert.equal(registeredSettings.ns, '@goodandready/dsh-live-canvas');
-  assert.equal(tools.length, 3);
+  assert.equal(tools.length, 4); // preview, inspect, reload, diagnose
   assert.equal(routes.length, 3); // events, sandbox, api
 
   // Find routes
@@ -147,6 +147,25 @@ test('Plugin lifecycle applies routes and handles sandbox and API endpoints', as
   assert.equal(getInsp.res.statusCode, 200);
   const inspData = JSON.parse(getInsp.res.body);
   assert.equal(inspData.inspected.selector, 'div.banner');
+
+  // Test 6: POST /dsh-live-canvas/api/logs & GET /dsh-live-canvas/api/logs
+  const postLog = createMockReqRes({ url: '/dsh-live-canvas/api/logs', method: 'POST' });
+  const logPromise = apiRoute.handler(postLog.req, postLog.res);
+  postLog.req.emit('data', JSON.stringify({
+    canvasId: prevData.canvasId,
+    level: 'error',
+    message: 'Runtime test error'
+  }));
+  postLog.req.emit('end');
+  await logPromise;
+  assert.equal(postLog.res.statusCode, 200);
+
+  const getLog = createMockReqRes({ url: `/dsh-live-canvas/api/logs?canvasId=${prevData.canvasId}`, method: 'GET' });
+  await apiRoute.handler(getLog.req, getLog.res);
+  assert.equal(getLog.res.statusCode, 200);
+  const logData = JSON.parse(getLog.res.body);
+  assert.equal(logData.count, 1);
+  assert.equal(logData.logs[0].message, 'Runtime test error');
 
   // Cleanup effects
   for (const cleanup of effects) {
