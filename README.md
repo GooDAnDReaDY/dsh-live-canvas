@@ -1,4 +1,4 @@
-# @goodandready-private/dsh-live-canvas
+# @goodandready/dsh-live-canvas
 
 Interactive in-browser canvas for real-time preview of HTML, React components, SVGs, Mermaid diagrams, and Markdown documents with SSE hot-reload and DOM click inspector for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness).
 
