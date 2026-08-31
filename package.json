@@ -1,6 +1,6 @@
 {
   "name": "@goodandready/dsh-live-canvas",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "Interactive in-browser canvas for real-time preview of HTML, React components, SVGs, and diagrams with SSE hot-reload",
   "type": "module",
   "main": "lib/index.js",
