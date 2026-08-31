@@ -2,7 +2,7 @@
 
 <div align="center">
 
-<h3>Interactive Visual Development Studio, Split-View Code Editor, Component Storybook, Drag & Drop Canvas, Curated UI Blocks, and 1-Click Vite Packager for DeepSeek Harness</h3>
+<h3>Interactive Visual Development Studio, Split-View Code Editor, Component Storybook, Motion Playground, AI Theme Engine, and 1-Click Vite Packager for DeepSeek Harness</h3>
 
 <p align="center">
   <a href="https://www.npmjs.com/package/@goodandready/dsh-live-canvas"><img src="https://img.shields.io/npm/v/@goodandready/dsh-live-canvas.svg?style=for-the-badge&color=6366f1&labelColor=1e1b4b" alt="npm version"></a>
@@ -31,9 +31,9 @@ Building and iterating modern front-end interfaces inside an AI agent workspace 
 - **Blind Code Generation**: Agents write HTML/JSX code, but human developers must switch out to external bundlers or browsers to inspect the visual output.
 - **Lost Context on Recompilation**: Typical reloads lose local state, component hierarchy, and responsive breakpoint context.
 - **Complex Multi-File References**: Single-file previews break when React components import local child modules (`./Header.jsx`, `./theme.css`, `./data.js`) or serve local images.
-- **Friction in Fine-Tuning**: Minor text tweaks or color adjustments require full conversational roundtrips with the agent instead of instant in-place visual edits.
+- **Friction in Fine-Tuning**: Minor text tweaks, theme adjustments, or animation timing changes require full conversational roundtrips with the agent.
 
-**`dsh-live-canvas`** transforms DeepSeek Harness into a full-featured visual development studio with zero setup. It provides instant hot-reloaded canvas previews, multi-file recursive ESM bundling, an inline WYSIWYG text editor, a floating Tailwind style tweaker, a split-view code drawer, an automated Storybook matrix generator, visual Drag-and-Drop section reordering, a curated agency-level UI blocks library, and 1-click Vite project export.
+**`dsh-live-canvas`** transforms DeepSeek Harness into an all-in-one visual frontend & design studio with zero external setup. It provides instant hot-reloaded canvas previews, multi-file recursive ESM bundling, an inline WYSIWYG text editor, a floating Tailwind style tweaker, a split-view code drawer, an automated Storybook matrix generator, visual Drag-and-Drop section reordering, an AI theme tokens engine, micro-animations presets, a contextual mock data generator, a visual regression auditor, and 1-click Vite project export.
 
 ---
 
@@ -46,11 +46,14 @@ graph TD
     classDef ui fill:#451a03,stroke:#f59e0b,stroke-width:2px,color:#fff;
     classDef sandbox fill:#18181b,stroke:#71717a,stroke-width:2px,color:#fff;
 
-    Agent[🤖 DeepSeek Harness Agent / Tools]:::agent
+    Agent[🤖 DeepSeek Harness Agent / 20 Tools]:::agent
     Store[💾 PreviewStore LRU Cache & Version Snapshots]:::core
     Watcher[📁 WorkspaceWatcher File Change Detection]:::core
     Bundler[⚡ Smart ESM Bundler & Transpiler]:::core
-    StaticAsset[🖼️ Static Asset Server /assets/*]:::core
+    Themes[🎨 AI Theme Tokens Engine]:::core
+    Faker[⚡ Smart Mock Data Generator]:::core
+    Motion[✨ Motion & Micro-Animations Studio]:::core
+    Share[📱 QR Code Mobile Live Share]:::core
 
     WebUI[💻 DSH WebUI BetterSidebar Tab]:::ui
     EditorDrawer[📝 Split-View Code Editor Drawer]:::ui
@@ -65,8 +68,11 @@ graph TD
     Agent -->|live_canvas_preview / tools| Store
     Watcher -->|Auto file sync| Store
     Store --> Bundler
+    Themes --> SandboxFrame
+    Motion --> SandboxFrame
+    Faker --> Store
+    Share --> WebUI
     Bundler --> SandboxFrame
-    StaticAsset --> SandboxFrame
 
     WebUI --> EditorDrawer
     WebUI --> BlocksModal
@@ -82,9 +88,9 @@ graph TD
 
 ---
 
-## ✨ Full Feature Breakdown
+## ✨ Pro Studio Features Breakdown
 
-### 1. Multi-File ESM Bundler (`lib/transpiler.js`)
+### 1. Multi-File Recursive ESM Bundler (`lib/transpiler.js`)
 - Recursively resolves relative local imports (`./Header.jsx`, `./components/Card.tsx`, `./data.js`, `./styles.css`).
 - Inlines child modules into an isolated Babel template and serves local image assets safely via `GET /dsh-live-canvas/assets/*`.
 
@@ -93,38 +99,34 @@ graph TD
 - Provides a collapsible side-by-side monospace code editor with live syntax view.
 - Bi-directional synchronization: edits in the code drawer hot-reload the canvas in real time; selecting elements in the Inspector highlights matching code sections.
 
-### 3. Component Storybook & UI Kit Matrix (`lib/storybook.js`)
-- Toggle with **`🧩 UI Kit`** button or execute agent tool `live_canvas_storybook`.
-- Scans all `.jsx`, `.tsx`, and `.vue` components across the active workspace and builds a multi-variant side-by-side gallery showing component states.
+### 3. AI Theme Tokens Engine (`lib/themes.js`)
+- 1-click design system switcher: *Linear Dark*, *Vercel Clean*, *Swiss Editorial*, *Glassmorphism Neon*, and *Cyberpunk Terminal*.
+- Dynamically injects CSS variables and generates ready-to-use `tailwind.config.js` design tokens.
 
-### 4. Drag & Drop Visual Section Reordering (`lib/sandbox.js`)
-- Toggle with **`↕️ D&D`** button in the toolbar.
-- Allows intuitive dragging of `<section>`, `<header>`, `<footer>`, `<nav>`, and `.card` containers.
-- Reordered DOM structure is automatically synced and persisted to disk via `POST /dsh-live-canvas/api/save-reorder`.
+### 4. Automated Visual Regression & Layout Audit (Tool 18: `live_canvas_visual_audit`)
+- Autonomous inspection of canvas DOM for text overflow clipping, missing accessibility labels (a11y), contrast issues, and mobile responsiveness.
 
-### 5. Curated High-End UI Blocks Library (`lib/templates.js`)
-- Access via **`✨ Blocks`** modal in the toolbar or agent tool `live_canvas_insert_block`.
-- Built-in library of agency-grade dark mode design blocks:
-  - **Glowing Mesh Agency Hero**: Radiant gradient blur aura, badge pill, dual CTAs.
-  - **Glassmorphic Bento Grid**: Asymmetric feature cards with glowing borders.
-  - **SaaS 3-Tier Pricing Table**: Transparent dark cards with featured badge and checkmarks.
-  - **Modern Dark FAQ Accordion**: Expandable smooth-transition question items.
-  - **Minimalist Agency Footer**: Sleek dark footer with social links and system status indicator.
+### 5. Micro-Animations & Motion Playground (`lib/motion.js`)
+- Visual animation studio supporting Framer Motion and zero-runtime CSS keyframe presets (*Staggered Fade-Up*, *3D Hover Tilt*, *Ambient Glow Pulse*, *Floating Elements*).
 
-### 6. Inline WYSIWYG & Floating Style Tweaker (`lib/sandbox.js`)
-- **Double-Click Edit**: Double-click any heading, paragraph, or label on canvas to edit text in place; hit <kbd>Enter</kbd> to persist changes to source files on disk.
-- **Style Tweaker Bar**: Click elements with Inspector enabled to tweak Tailwind colors, padding, rounding, and shadow presets with instant disk sync.
+### 6. Contextual Mock Data & Form State Generator (Tool 19: `live_canvas_generate_mock`)
+- Populates realistic mock datasets (*Users & Teams*, *E-Commerce Products*, *Analytics Time Series*) without external npm dependencies.
 
-### 7. Multi-Device Matrix & Visual Diff Slider
-- **Responsive Breakpoints**: Instant toggle between Responsive, Mobile (375px), Tablet (768px), and Multi-Device Matrix with synchronized scrolling.
-- **Visual Diff Slider**: Side-by-side comparative split slider to review regressions across version snapshots.
+### 7. QR Code Mobile Live Preview & Sharing (Tool 20: `live_canvas_share`)
+- Generates an instant QR code SVG and local network URL to test responsive canvas layouts on real smartphones on the local Wi-Fi network.
 
-### 8. 1-Click Vite Project Export (`lib/packager.js`)
-- Instant ZIP download or disk export of complete production-ready projects configured with `vite.config.js`, `package.json`, `tailwind.config.js`, and entrypoints.
+### 8. Component Storybook & UI Kit Matrix (`lib/storybook.js`)
+- Scans all `.jsx`, `.tsx`, and `.vue` components across the active workspace and builds a multi-variant side-by-side gallery.
+
+### 9. Drag & Drop Visual Section Reordering (`lib/sandbox.js`)
+- Drag and drop `<section>`, `<header>`, `<footer>`, `<nav>`, and `.card` containers with instant persistence to disk via `POST /dsh-live-canvas/api/save-reorder`.
+
+### 10. Curated High-End UI Blocks Library (`lib/templates.js`)
+- Built-in library of agency-grade dark mode design blocks (*Hero Mesh Glow*, *Glassmorphic Bento Grid*, *SaaS 3-Tier Pricing*, *FAQ Accordion*, *Agency Footer*).
 
 ---
 
-## 🛠️ Complete Agent Tools Reference (17 Tools)
+## 🛠️ Complete Agent Tools Reference (20 Tools)
 
 | Tool Name | Purpose | Output / Action |
 |---|---|---|
@@ -145,6 +147,9 @@ graph TD
 | `live_canvas_storybook` | Auto-scan workspace components and create UI Kit gallery | `galleryUrl`, `componentsCount` |
 | `live_canvas_insert_block` | Insert curated design block (Hero, Bento, Pricing, FAQ, Footer) | `blockId`, `title` |
 | `live_canvas_vision_import`| Convert image screenshot / mockup into interactive canvas | `previewUrl`, `framework` |
+| `live_canvas_visual_audit` | Inspect canvas DOM for overflow, contrast, and layout issues | `score`, `issuesCount`, `issues` |
+| `live_canvas_generate_mock`| Generate realistic mock JSON datasets and inject into sandbox | `datasetType`, `mockData` |
+| `live_canvas_share` | Generate mobile QR code and local network preview URL | `shareUrl`, `qrSvg` |
 
 ---
 
