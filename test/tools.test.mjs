@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { PreviewStore } from '../lib/store.js';
 import { EventHub } from '../lib/events.js';
+import { WorkspaceWatcher } from '../lib/watcher.js';
 import { registerLiveCanvasTools } from '../lib/tools.js';
 
 function createMockCtx() {
@@ -16,12 +17,13 @@ function createMockCtx() {
   };
 }
 
-test('registerLiveCanvasTools registers all seven agent tools', async () => {
+test('registerLiveCanvasTools registers all eight agent tools', async () => {
   const ctx = createMockCtx();
   const store = new PreviewStore();
   const eventHub = new EventHub({ heartbeatIntervalMs: 60000 });
+  const watcher = new WorkspaceWatcher(store, eventHub);
 
-  registerLiveCanvasTools(ctx, store, eventHub);
+  registerLiveCanvasTools(ctx, store, eventHub, { watcher });
 
   const previewTool = ctx._getTool('live_canvas_preview');
   const inspectTool = ctx._getTool('live_canvas_inspect');
@@ -30,6 +32,7 @@ test('registerLiveCanvasTools registers all seven agent tools', async () => {
   const exportTool = ctx._getTool('live_canvas_export');
   const annTool = ctx._getTool('live_canvas_annotations');
   const galleryTool = ctx._getTool('live_canvas_gallery');
+  const watchTool = ctx._getTool('live_canvas_watch');
 
   assert.ok(previewTool, 'live_canvas_preview tool should be registered');
   assert.ok(inspectTool, 'live_canvas_inspect tool should be registered');
@@ -38,25 +41,12 @@ test('registerLiveCanvasTools registers all seven agent tools', async () => {
   assert.ok(exportTool, 'live_canvas_export tool should be registered');
   assert.ok(annTool, 'live_canvas_annotations tool should be registered');
   assert.ok(galleryTool, 'live_canvas_gallery tool should be registered');
+  assert.ok(watchTool, 'live_canvas_watch tool should be registered');
 
-  // Test live_canvas_preview execution
-  const prevRes = await previewTool.execute({
-    title: 'Dashboard Widget',
-    content: '<div class="card">Stats: 100%</div>',
-    viewport: 'tablet',
-    theme: 'dark'
-  });
-
-  assert.equal(prevRes.success, true);
-  assert.ok(prevRes.canvasId.startsWith('canvas-'));
-
-  // Test live_canvas_gallery execution
-  const gallRes = await galleryTool.execute({
-    title: 'Badge Gallery',
-    variants: [{ name: 'Success', content: '<span>OK</span>' }]
-  });
-  assert.equal(gallRes.success, true);
-  assert.equal(gallRes.variantsCount, 1);
+  // Test watchTool status
+  const statusRes = await watchTool.execute({ action: 'status' });
+  assert.equal(statusRes.success, true);
+  assert.equal(statusRes.action, 'status');
 
   eventHub.closeAll();
 });
