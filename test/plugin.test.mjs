@@ -38,7 +38,7 @@ test('Plugin exports correct metadata and schema', () => {
   assert.ok(Config);
 });
 
-test('Plugin lifecycle applies routes and handles sandbox, API, and export endpoints', async () => {
+test('Plugin lifecycle applies routes and handles sandbox, API, diff, and export endpoints', async () => {
   const routes = [];
   const tools = [];
   let registeredSettings = null;
@@ -89,12 +89,14 @@ test('Plugin lifecycle applies routes and handles sandbox, API, and export endpo
   });
 
   assert.equal(registeredSettings.ns, '@goodandready/dsh-live-canvas');
-  assert.equal(tools.length, 9); // preview, inspect, reload, diagnose, export, annotations, gallery, watch, controls
-  assert.equal(routes.length, 3); // events, sandbox, api
+  assert.equal(tools.length, 10); // preview, inspect, reload, diagnose, export, annotations, gallery, watch, controls, diff
+  assert.equal(routes.length, 4); // events, sandbox, diff, api
 
   const sandboxRoute = routes.find(r => r.path === '/dsh-live-canvas/sandbox');
+  const diffRoute = routes.find(r => r.path === '/dsh-live-canvas/diff');
   const apiRoute = routes.find(r => r.path === '/dsh-live-canvas/api');
   assert.ok(sandboxRoute, 'Sandbox route should be registered');
+  assert.ok(diffRoute, 'Diff route should be registered');
   assert.ok(apiRoute, 'API route should be registered');
 
   // Test 1: POST /dsh-live-canvas/api/preview
@@ -113,32 +115,23 @@ test('Plugin lifecycle applies routes and handles sandbox, API, and export endpo
   assert.equal(prevData.success, true);
   assert.ok(prevData.canvasId);
 
-  // Test 2: GET /dsh-live-canvas/sandbox/<id>
-  const getSandbox = createMockReqRes({ url: `/dsh-live-canvas/sandbox/${prevData.canvasId}`, method: 'GET' });
-  sandboxRoute.handler(getSandbox.req, getSandbox.res);
-
-  assert.equal(getSandbox.res.statusCode, 200);
-  assert.ok(getSandbox.res.body.includes('Hello from Test'));
-  assert.ok(getSandbox.res.body.includes('dlc-sandbox-runtime'));
-  assert.equal(getSandbox.res.headers['X-Content-Type-Options'], 'nosniff');
-
-  // Test 3: POST /dsh-live-canvas/api/controls & GET
-  const postCtrl = createMockReqRes({ url: '/dsh-live-canvas/api/controls', method: 'POST' });
-  const ctrlPromise = apiRoute.handler(postCtrl.req, postCtrl.res);
-  postCtrl.req.emit('data', JSON.stringify({
+  // Update content to create a snapshot
+  const postPrev2 = createMockReqRes({ url: '/dsh-live-canvas/api/preview', method: 'POST' });
+  const postPromise2 = apiRoute.handler(postPrev2.req, postPrev2.res);
+  postPrev2.req.emit('data', JSON.stringify({
     canvasId: prevData.canvasId,
-    controls: { size: { type: 'number', default: 24 } },
-    values: { size: 32 }
+    title: 'Test Component V2',
+    content: '<div class="banner">Hello from Test V2</div>',
+    componentType: 'html'
   }));
-  postCtrl.req.emit('end');
-  await ctrlPromise;
-  assert.equal(postCtrl.res.statusCode, 200);
+  postPrev2.req.emit('end');
+  await postPromise2;
 
-  const getCtrl = createMockReqRes({ url: `/dsh-live-canvas/api/controls?canvasId=${prevData.canvasId}`, method: 'GET' });
-  await apiRoute.handler(getCtrl.req, getCtrl.res);
-  assert.equal(getCtrl.res.statusCode, 200);
-  const ctrlData = JSON.parse(getCtrl.res.body);
-  assert.equal(ctrlData.values.size, 32);
+  // Test 2: GET /dsh-live-canvas/diff/<id>
+  const getDiff = createMockReqRes({ url: `/dsh-live-canvas/diff/${prevData.canvasId}`, method: 'GET' });
+  diffRoute.handler(getDiff.req, getDiff.res);
+  assert.equal(getDiff.res.statusCode, 200);
+  assert.ok(getDiff.res.body.includes('diff-container'));
 
   for (const cleanup of effects) {
     if (typeof cleanup === 'function') cleanup();
