@@ -2,7 +2,7 @@
 
 <div align="center">
 
-<h3>Интерактивная дизайн-студия, Split-View редактор кода, Storybook UI Kit, студия анимаций, генератор мок-данных, AI-темы и экспорт в Vite для DeepSeek Harness</h3>
+<h3>Интерактивная дизайн-студия, Effective HTML артефакты (вайрфреймы, роадмапы, живые диаграммы, прототипы), Split-View редактор кода, Storybook UI Kit и экспорт в Vite для DeepSeek Harness</h3>
 
 <p align="center">
   <a href="https://www.npmjs.com/package/@goodandready/dsh-live-canvas"><img src="https://img.shields.io/npm/v/@goodandready/dsh-live-canvas.svg?style=for-the-badge&color=6366f1&labelColor=1e1b4b" alt="npm version"></a>
@@ -25,15 +25,14 @@
 
 ---
 
-## ⚡ Обзор и решаемая проблема
+## ⚡ Философия «Fat Artifacts + Fat Context»
 
-Разработка и отладка интерфейсов в среде ИИ-агентов традиционно сопряжена с рядом проблем:
-- **Генерация «вслепую»**: агент генерирует код верстки или компонентов, но человеку приходится вручную запускать внешние сборщики, чтобы оценить результат.
-- **Потеря контекста при перезагрузке**: сброс состояния React-хуков и точек адаптивности.
-- **Многофайловые зависимости**: компоненты часто импортируют дочерние модули (`./Header.jsx`, `./theme.css`, `./data.js`) и локальные картинки.
-- **Высокая стоимость мелких правок**: изменить тему, анимацию или текст требует нового полного запроса к модели.
-
-**`dsh-live-canvas`** превращает DeepSeek Harness в полноценную визуальную фронтенд-студию и дизайн-комбайн. Плагин предоставляет моментальный рендеринг HTML5/React с горячей перезагрузкой, рекурсивный ESM-бандлер, встроенный WYSIWYG-редактор текста, плавающий твикер Tailwind-стилей, Split-View редактор кода, автоматический Storybook UI Kit, Drag-and-Drop перетаскивание секций, движок тем и токенов, студию анимаций, генератор контекстных мок-данных, QR-код для мобильного тестирования и экспорт в Vite проект в 1 клик.
+Вдохновленный манифестом *The Unreasonable Effectiveness of HTML* и Plannotator, **`dsh-live-canvas`** превращает DeepSeek Harness из простого текстового чата в богатую визуальную дизайн-среду. Вместо громоздких простыней текста агент генерирует **самодостаточные интерактивные HTML-артефакты**:
+- **📐 Low-Fi Вайрфреймы**: Монохромные чертежи со скелетонами для тестирования структуры, информационной иерархии и UX без отвлечения на дизайн.
+- **📋 Интерактивные Роадмапы и Планы**: Живые панели готовности релиза с чекбоксами задач, приоритетами (`P0`/`P1`/`P2`) и сохранением состояния в `localStorage`.
+- **📊 Живые Архитектурные Диаграммы**: Интерактивные схемы с зумом, перетаскиванием узлов, анимацией потоков данных и карточками инспекции сервисов.
+- **🧪 Многошаговые Прототипы**: Рабочие визарды онбординга, формы авторизации и оформление заказа с переходами и симуляцией стейт-машины.
+- **✍️ Резолюция визуальных правок**: Фиксация статусов замечаний («Решено / В работе») прямо на холсте.
 
 ---
 
@@ -46,41 +45,39 @@ graph TD
     classDef ui fill:#451a03,stroke:#f59e0b,stroke-width:2px,color:#fff;
     classDef sandbox fill:#18181b,stroke:#71717a,stroke-width:2px,color:#fff;
 
-    Agent[🤖 ИИ-Агент DeepSeek Harness / 20 Инструментов]:::agent
-    Store[💾 PreviewStore LRU Кэш и Снимки Версий]:::core
+    Agent[🤖 ИИ-Агент DeepSeek Harness / 25 Инструментов]:::agent
+    Store[💾 PreviewStore LRU Кэш и Аннотации]:::core
     Watcher[📁 WorkspaceWatcher Отслеживание Файлов]:::core
     Bundler[⚡ Smart ESM Bundler и Транспилятор]:::core
+    Artifacts[📋 Генератор Effective HTML Артефактов]:::core
     Themes[🎨 Движок Токенов Дизайн-Систем]:::core
-    Faker[⚡ Генератор Мок-Данных]:::core
-    Motion[✨ Студия Микро-Анимаций]:::core
-    Share[📱 QR-код Мобильного Превью]:::core
 
     WebUI[💻 DSH WebUI BetterSidebar Вкладка]:::ui
     EditorDrawer[📝 Split-View Панель Редактора Кода]:::ui
+    ArtifactsModal[📐 Меню Effective Артефактов]:::ui
     BlocksModal[✨ Каталог Дизайн-Блоков]:::ui
     Storybook[🧩 Генератор Storybook UI Kit]:::ui
 
     SandboxFrame[🛡️ Изолированный Iframe Холст]:::sandbox
     WYSIWYG[✏️ Двойной Клик WYSIWYG Правка Текста]:::sandbox
-    StyleTweaker[🎛️ Плавающий Твикер Tailwind Стилей]:::sandbox
+    Blueprint[📐 Blueprint Чертежный Режим]:::sandbox
     DnD[↕️ Drag & Drop Перестановка Секций]:::sandbox
 
-    Agent -->|live_canvas_preview / инструменты| Store
+    Agent -->|live_canvas_create_* / инструменты| Store
     Watcher -->|Автосинхронизация файлов| Store
     Store --> Bundler
+    Artifacts --> Store
     Themes --> SandboxFrame
-    Motion --> SandboxFrame
-    Faker --> Store
-    Share --> WebUI
     Bundler --> SandboxFrame
 
     WebUI --> EditorDrawer
+    WebUI --> ArtifactsModal
     WebUI --> BlocksModal
     WebUI --> Storybook
     WebUI --> SandboxFrame
 
     SandboxFrame --> WYSIWYG
-    SandboxFrame --> StyleTweaker
+    SandboxFrame --> Blueprint
     SandboxFrame --> DnD
     WYSIWYG -->|POST /api/save-content| Watcher
     DnD -->|POST /api/save-reorder| Watcher
@@ -88,44 +85,39 @@ graph TD
 
 ---
 
-## ✨ Pro Studio возможности
+## ✨ Pro Studio & Effective HTML Suite
 
-### 1. Многофайловый рекурсивный ESM-бандлер (`lib/transpiler.js`)
-- Автоматически находит и подтягивает локальные импорты (`./Header.jsx`, `./components/Card.tsx`, `./data.js`, `./styles.css`).
-- Встраивает дочерние компоненты в изолированный Babel-шаблон и безопасно раздает локальные изображения через `GET /dsh-live-canvas/assets/*`.
+### 1. Архетипы интерактивных HTML-артефактов
+- **Low-Fi Вайрфреймы (`lib/wireframe.js` / Tool 21)**: Монохромные макеты со скелетон-текстом, диагональными блоками картинок и карточками.
+- **Интерактивные Роадмапы (`lib/plan.js` / Tool 22)**: Панели прогресса с приоритетами (`P0`/`P1`/`P2`), чекбоксами и автосохранением в `localStorage`.
+- **Живые Архитектурные Схемы (`lib/diagram.js` / Tool 23)**: Интерактивные графы узлов с анимацией потоков данных и инспектором сервисов.
+- **Многошаговые Прототипы (`lib/prototype.js` / Tool 24)**: Интерактивные визарды с плавной анимацией шагов и валидацией форм.
+- **Резолюция Аннотаций (`lib/store.js` / Tool 25)**: Управление статусами правок (`open` / `resolved`) с фиксацией ответа агента.
 
-### 2. Выдвижная панель редактора кода Split-View (`lib/client.js`)
-- Открывается по кнопке **`💻 Код`** в тулбаре с подсветкой и моноширинным редактором.
-- Двусторонняя синхронизация: правки в коде на лету обновляют холст и исходный файл.
+### 2. Многофайловый рекурсивный ESM-бандлер (`lib/transpiler.js`)
+- Автопоиск и сборка локальных импортов (`.jsx`, `.tsx`, `.vue`, `.css`) и безопасная раздача ассетов через `GET /dsh-live-canvas/assets/*`.
 
-### 3. AI Theme Tokens Engine (`lib/themes.js`)
+### 3. Split-View редактор кода (`lib/client.js`)
+- Выдвижная панель моноширинного редактора с двусторонней синхронизацией в реальном времени.
+
+### 4. AI Theme Tokens Engine (`lib/themes.js`)
 - Переключение дизайн-систем в 1 клик: *Linear Dark*, *Vercel Clean*, *Swiss Editorial*, *Glassmorphism Neon*, *Cyberpunk Terminal*.
-- Автогенерация CSS-переменных и готовых токенов `tailwind.config.js`.
 
-### 4. Автономный аудит верстки и контрастности (Tool 18: `live_canvas_visual_audit`)
-- Инспекция DOM на предмет вылезающего за границы текста, нарушений контрастности WCAG и проблем с мобильной адаптивностью.
+### 5. Автономный аудит верстки (Tool 18: `live_canvas_visual_audit`)
+- Проверка DOM на вылезающий текст, нарушения контрастности WCAG и проблемы с адаптивностью.
 
-### 5. Студия микро-анимаций (`lib/motion.js`)
-- Готовые пресеты анимаций и кейфреймов (*Staggered Fade-Up*, *3D Hover Tilt*, *Ambient Glow Pulse*, *Floating Elements*).
+### 6. Студия микро-анимаций (`lib/motion.js`)
+- Пресеты пружинной анимации и кейфреймов (*Staggered Fade-Up*, *3D Hover Tilt*, *Ambient Glow*).
 
-### 6. Генератор реалистичных мок-данных (Tool 19: `live_canvas_generate_mock`)
-- Заполнение таблиц, карточек и графиков реалистичными моками (*Пользователи*, *Товары E-Commerce*, *Аналитика*) без внешних npm-пакетов.
+### 7. Генератор мок-данных (Tool 19: `live_canvas_generate_mock`)
+- Заполнение таблиц, карточек и графиков моками (*Пользователи*, *Товары E-Commerce*, *Аналитика*).
 
-### 7. Мобильное тестирование по QR-коду (Tool 20: `live_canvas_share`)
-- Генерация QR-кода и локального URL для мгновенного открытия верстки на реальном смартфоне в локальной сети Wi-Fi.
-
-### 8. Storybook UI Kit Matrix (`lib/storybook.js`)
-- Автосканирование `.jsx`/`.tsx`/`.vue` компонентов и построение сравнительной матрицы состояний.
-
-### 9. Drag & Drop перестановка секций (`lib/sandbox.js`)
-- Визуальное перемещение секций мышью с сохранением нового порядка в файл на диске через `POST /dsh-live-canvas/api/save-reorder`.
-
-### 10. Каталог готовых премиум-блоков (`lib/templates.js`)
-- Готовые блоки: *Glowing Hero*, *Glassmorphic Bento Grid*, *SaaS Pricing*, *FAQ Accordion*, *Agency Footer*.
+### 8. Мобильное тестирование по QR-коду (Tool 20: `live_canvas_share`)
+- Генерация QR-кода для мгновенного открытия верстки на смартфоне по Wi-Fi.
 
 ---
 
-## 🛠️ Справочник инструментов агента (20 инструментов)
+## 🛠️ Справочник инструментов агента (25 инструментов)
 
 | Имя инструмента | Назначение | Результат / Действие |
 |---|---|---|
@@ -149,6 +141,11 @@ graph TD
 | `live_canvas_visual_audit` | Анализ DOM на переполнение, контрастность и адаптивность | `score`, `issuesCount`, `issues` |
 | `live_canvas_generate_mock`| Генерация реалистичных JSON мок-данных и внедрение в песочницу | `datasetType`, `mockData` |
 | `live_canvas_share` | Генерация QR-кода и локального URL для смартфона | `shareUrl`, `qrSvg` |
+| `live_canvas_create_wireframe` | Генерация Low-Fi структурного чертежа вайрфрейма | `previewUrl`, `layout` |
+| `live_canvas_create_plan` | Генерация интерактивного роадмапа проекта и плана релиза | `previewUrl`, `version` |
+| `live_canvas_create_diagram` | Генерация живой интерактивной схемы архитектуры и потоков данных | `previewUrl`, `diagramType` |
+| `live_canvas_create_prototype` | Генерация многошагового интерактивного прототипа (визарда) | `previewUrl`, `flowType` |
+| `live_canvas_resolve_annotation` | Пометка визуального замечания как решенного с фиксацией ответа | `status: 'resolved'` |
 
 ---
 
