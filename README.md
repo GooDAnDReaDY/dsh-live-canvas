@@ -2,7 +2,7 @@
 
 <div align="center">
 
-<h3>Interactive Visual Development Studio, Effective HTML Artifacts (Wireframes, Plans, Living Diagrams, Prototypes), Split-View Code Editor, Component Storybook, and 1-Click Vite Packager for DeepSeek Harness</h3>
+<h3>Interactive Visual Development Studio, Retool-Style CRUD Studio, Time-Travel Debugger, Instant Multi-Platform Deploy (Vercel, Cloudflare, Netlify, Gist), Figma Vector Bridge, Sound FX, and 30 Agent Tools for DeepSeek Harness</h3>
 
 <p align="center">
   <a href="https://www.npmjs.com/package/@goodandready/dsh-live-canvas"><img src="https://img.shields.io/npm/v/@goodandready/dsh-live-canvas.svg?style=for-the-badge&color=6366f1&labelColor=1e1b4b" alt="npm version"></a>
@@ -25,14 +25,16 @@
 
 ---
 
-## ⚡ Overview & Philosophy: "Fat Artifacts + Fat Context"
+## ⚡ Overview & Capabilities: Milestone v0.2.0
 
-Inspired by Thariq Shihipar's *The Unreasonable Effectiveness of HTML* and Plannotator, **`dsh-live-canvas`** transforms DeepSeek Harness from a standard chat prompt interface into a rich visual workspace. Instead of returning walls of text in chat, AI agents can generate **self-contained, interactive HTML artifacts**:
-- **📐 Low-Fi Wireframes**: Blueprint structural wireframes to test layout and hierarchy without visual bias.
-- **📋 Interactive Plans & Roadmaps**: Living release readiness roadmaps with milestone checkboxes and persistent local state.
-- **📊 Living Architecture Diagrams**: Zoomable interactive node graphs with animated data flow pulses and service inspection cards.
-- **🧪 Multi-Step Prototype Flows**: Functional onboarding wizards and checkout state machines with simulated backend responses.
-- **✍️ Visual Annotation Sign-Off**: Plannotator-style boxed markup with resolution threads.
+**`dsh-live-canvas`** transforms DeepSeek Harness into a state-of-the-art visual frontend studio and interactive artifact runtime with **30 Agent Tools**:
+- **🗄️ Retool-Style CRUD Admin Studio**: Searchable data grids, status filters, add/edit modals, and CSV export.
+- **⏳ Time-Travel Debugger & Timeline Scrubber**: Step back and forth across iterations without git checkouts.
+- **🌍 1-Click Multi-Platform Web Deploy**: Instant packaging for **Vercel**, **Cloudflare Pages**, **Netlify**, and **GitHub Gist**.
+- **🎨 Figma & Penpot Vector Bridge**: Bi-directional conversion between Figma SVG vector markup and Tailwind components.
+- **🔊 UI Sound FX & Micro-Interactions**: Zero-dependency Web Audio API tactile audio feedback.
+- **📋 Effective HTML Suite**: Low-fi wireframes, persistent roadmaps, living architecture diagrams, and multi-step prototype flows.
+- **💬 In-Chat Interactive Tool Cards**: Live embedded iframe preview in chat messages with 1-click BetterSidebar activation.
 
 ---
 
@@ -45,79 +47,47 @@ graph TD
     classDef ui fill:#451a03,stroke:#f59e0b,stroke-width:2px,color:#fff;
     classDef sandbox fill:#18181b,stroke:#71717a,stroke-width:2px,color:#fff;
 
-    Agent[🤖 DeepSeek Harness Agent / 25 Tools]:::agent
-    Store[💾 PreviewStore LRU Cache & Annotations]:::core
-    Watcher[📁 WorkspaceWatcher File Change Detection]:::core
+    Agent[🤖 DeepSeek Harness Agent / 30 Tools]:::agent
+    Store[💾 PreviewStore LRU Cache & History Snapshots]:::core
+    Watcher[📁 WorkspaceWatcher File Change Sync]:::core
     Bundler[⚡ Smart ESM Bundler & Transpiler]:::core
-    Artifacts[📋 Effective HTML Artifacts Generator]:::core
-    Themes[🎨 AI Theme Tokens Engine]:::core
+    Deployer[🌍 Multi-Platform Deploy Engine]:::core
+    FigmaBridge[🎨 Figma Vector Bridge]:::core
+    SoundEngine[🔊 Web Audio FX Synthesis]:::core
 
     WebUI[💻 DSH WebUI BetterSidebar Tab]:::ui
+    ChatCards[💬 In-Chat Live Preview Tool Cards]:::ui
     EditorDrawer[📝 Split-View Code Editor Drawer]:::ui
-    ArtifactsModal[📐 Effective Artifacts Menu]:::ui
-    BlocksModal[✨ Curated Design Blocks Library]:::ui
-    Storybook[🧩 Storybook UI Kit Matrix Generator]:::ui
+    TimeTravelUI[⏳ Time-Travel History Scrubber]:::ui
+    DeployModal[🌍 Instant Deploy Dialog]:::ui
 
     SandboxFrame[🛡️ Sandboxed Iframe Preview]:::sandbox
     WYSIWYG[✏️ Double-Click Inline WYSIWYG Editor]:::sandbox
-    Blueprint[📐 Blueprint Grayscale Filter Mode]:::sandbox
     DnD[↕️ Drag & Drop Section Reordering]:::sandbox
+    Blueprint[📐 Blueprint Grayscale Filter Mode]:::sandbox
 
-    Agent -->|live_canvas_create_* / tools| Store
-    Watcher -->|Auto file sync| Store
+    Agent --> Store
+    Watcher --> Store
     Store --> Bundler
-    Artifacts --> Store
-    Themes --> SandboxFrame
+    Deployer --> Store
+    FigmaBridge --> Store
     Bundler --> SandboxFrame
+    SoundEngine --> SandboxFrame
 
     WebUI --> EditorDrawer
-    WebUI --> ArtifactsModal
-    WebUI --> BlocksModal
-    WebUI --> Storybook
+    WebUI --> TimeTravelUI
+    WebUI --> DeployModal
     WebUI --> SandboxFrame
+    ChatCards -->|1-Click Activate Tab| WebUI
 
     SandboxFrame --> WYSIWYG
-    SandboxFrame --> Blueprint
     SandboxFrame --> DnD
-    WYSIWYG -->|POST /api/save-content| Watcher
-    DnD -->|POST /api/save-reorder| Watcher
+    SandboxFrame --> Blueprint
 ```
 
 ---
 
-## ✨ Pro Studio & Effective HTML Suite Breakdown
-
-### 1. Effective HTML Artifact Archetypes
-- **Low-Fi Wireframe Engine (`lib/wireframe.js` / Tool 21)**: Monochromatic blueprint layouts with skeleton text, diagonal image boxes, and structural cards.
-- **Interactive Roadmap Plan (`lib/plan.js` / Tool 22)**: Release readiness dashboards with priority tags (`P0`/`P1`/`P2`), phase milestones, and `localStorage` persistence.
-- **Living Architecture Diagrams (`lib/diagram.js` / Tool 23)**: Interactive node graphs with animated data flow lines and detailed service popups.
-- **Interactive Prototype Flows (`lib/prototype.js` / Tool 24)**: Multi-step wizards with transition animations, stepper pills, and state machine validation.
-- **Annotation Sign-Off (`lib/store.js` / Tool 25)**: Track annotation statuses (`open` / `resolved`) and resolution comments directly on canvas.
-
-### 2. Multi-File Recursive ESM Bundler (`lib/transpiler.js`)
-- Recursively resolves relative local imports (`./Header.jsx`, `./components/Card.tsx`, `./data.js`, `./styles.css`) and safely streams local images via `GET /dsh-live-canvas/assets/*`.
-
-### 3. Split-View Code Editor Drawer (`lib/client.js`)
-- Toggle with **`💻 Code`** button in the top toolbar with bi-directional real-time debounce sync.
-
-### 4. AI Theme Tokens Engine (`lib/themes.js`)
-- 1-click design system switcher: *Linear Dark*, *Vercel Clean*, *Swiss Editorial*, *Glassmorphism Neon*, and *Cyberpunk Terminal*.
-
-### 5. Visual Regression & Layout Audit (Tool 18: `live_canvas_visual_audit`)
-- Autonomous inspection of canvas DOM for text overflow clipping, missing accessibility labels, and responsive layout issues.
-
-### 6. Micro-Animations & Motion Playground (`lib/motion.js`)
-- Visual animation studio supporting Framer Motion and zero-runtime CSS keyframe presets (*Staggered Fade-Up*, *3D Hover Tilt*, *Ambient Glow*).
-
-### 7. Contextual Mock Data Generator (Tool 19: `live_canvas_generate_mock`)
-- Zero-dependency mock data generator for users, e-commerce products, and time-series analytics.
-
-### 8. QR Code Mobile Live Preview & Sharing (Tool 20: `live_canvas_share`)
-- Instant SVG QR code and local network URL to test live responsive previews on real smartphones.
-
----
-
-## 🛠️ Complete Agent Tools Reference (25 Tools)
+## 🛠️ Complete Agent Tools Reference (30 Tools)
 
 | Tool Name | Purpose | Output / Action |
 |---|---|---|
@@ -146,30 +116,18 @@ graph TD
 | `live_canvas_create_diagram` | Generate living interactive architecture diagram artifact | `previewUrl`, `diagramType` |
 | `live_canvas_create_prototype` | Generate multi-step interactive prototype wizard flow | `previewUrl`, `flowType` |
 | `live_canvas_resolve_annotation` | Mark visual user annotation as resolved with notes | `status: 'resolved'` |
+| `live_canvas_create_crud` | Generate Retool-style admin CRUD dashboard with table and modals | `previewUrl`, `entityName` |
+| `live_canvas_timetravel` | Step through snapshot history timeline or restore revisions | `timetravelUrl`, `snapshotsCount` |
+| `live_canvas_instant_deploy` | Generate ready-to-ship bundle for Vercel, Cloudflare, Netlify, Gist | `downloadUrl`, `instructions` |
+| `live_canvas_figma_bridge` | Convert Figma SVG vector code to Tailwind or export component SVG | `action`, `componentName` |
+| `live_canvas_sound_fx` | List or play synthesized Web Audio interaction feedback | `presetsCount`, `soundType` |
 
 ---
 
 ## 📦 Installation
 
-Install into your DeepSeek Harness profile with one command:
-
 ```bash
 dsh plugin --profile web add @goodandready/dsh-live-canvas
-```
-
----
-
-## ⚙️ Configuration (`settings.yaml`)
-
-```yaml
-plugins:
-  "@goodandready/dsh-live-canvas":
-    defaultViewport: "responsive" # Options: responsive, mobile, tablet, matrix
-    autoOpenOnHtmlGen: true       # Auto-open Live Canvas tab upon UI generation
-    enableHotReload: true         # Enable SSE hot-reload on session code updates
-    maxSessionCache: 50           # Maximum active preview sessions in LRU memory
-    enableFileWatcher: true       # Enable filesystem watcher for live code sync
-    workspaceDir: ""              # Custom workspace directory (defaults to cwd)
 ```
 
 ---
