@@ -2,7 +2,7 @@
 
 <div align="center">
 
-<h3>Интерактивная дизайн-студия, Effective HTML артефакты (вайрфреймы, роадмапы, живые диаграммы, прототипы), Split-View редактор кода, Storybook UI Kit и экспорт в Vite для DeepSeek Harness</h3>
+<h3>Интерактивная дизайн-студия, Retool-подобные CRUD панели, Time-Travel отладчик, мгновенный деплой (Vercel, Cloudflare, Netlify, Gist), Figma Vector Bridge, саунд-дизайн и 30 инструментов агента для DeepSeek Harness</h3>
 
 <p align="center">
   <a href="https://www.npmjs.com/package/@goodandready/dsh-live-canvas"><img src="https://img.shields.io/npm/v/@goodandready/dsh-live-canvas.svg?style=for-the-badge&color=6366f1&labelColor=1e1b4b" alt="npm version"></a>
@@ -25,99 +25,20 @@
 
 ---
 
-## ⚡ Философия «Fat Artifacts + Fat Context»
+## ⚡ Обзор возможностей: Майлстоун v0.2.0
 
-Вдохновленный манифестом *The Unreasonable Effectiveness of HTML* и Plannotator, **`dsh-live-canvas`** превращает DeepSeek Harness из простого текстового чата в богатую визуальную дизайн-среду. Вместо громоздких простыней текста агент генерирует **самодостаточные интерактивные HTML-артефакты**:
-- **📐 Low-Fi Вайрфреймы**: Монохромные чертежи со скелетонами для тестирования структуры, информационной иерархии и UX без отвлечения на дизайн.
-- **📋 Интерактивные Роадмапы и Планы**: Живые панели готовности релиза с чекбоксами задач, приоритетами (`P0`/`P1`/`P2`) и сохранением состояния в `localStorage`.
-- **📊 Живые Архитектурные Диаграммы**: Интерактивные схемы с зумом, перетаскиванием узлов, анимацией потоков данных и карточками инспекции сервисов.
-- **🧪 Многошаговые Прототипы**: Рабочие визарды онбординга, формы авторизации и оформление заказа с переходами и симуляцией стейт-машины.
-- **✍️ Резолюция визуальных правок**: Фиксация статусов замечаний («Решено / В работе») прямо на холсте.
-
----
-
-## 🏛️ Архитектура системы
-
-```mermaid
-graph TD
-    classDef agent fill:#1e1b4b,stroke:#6366f1,stroke-width:2px,color:#fff;
-    classDef core fill:#064e3b,stroke:#10b981,stroke-width:2px,color:#fff;
-    classDef ui fill:#451a03,stroke:#f59e0b,stroke-width:2px,color:#fff;
-    classDef sandbox fill:#18181b,stroke:#71717a,stroke-width:2px,color:#fff;
-
-    Agent[🤖 ИИ-Агент DeepSeek Harness / 25 Инструментов]:::agent
-    Store[💾 PreviewStore LRU Кэш и Аннотации]:::core
-    Watcher[📁 WorkspaceWatcher Отслеживание Файлов]:::core
-    Bundler[⚡ Smart ESM Bundler и Транспилятор]:::core
-    Artifacts[📋 Генератор Effective HTML Артефактов]:::core
-    Themes[🎨 Движок Токенов Дизайн-Систем]:::core
-
-    WebUI[💻 DSH WebUI BetterSidebar Вкладка]:::ui
-    EditorDrawer[📝 Split-View Панель Редактора Кода]:::ui
-    ArtifactsModal[📐 Меню Effective Артефактов]:::ui
-    BlocksModal[✨ Каталог Дизайн-Блоков]:::ui
-    Storybook[🧩 Генератор Storybook UI Kit]:::ui
-
-    SandboxFrame[🛡️ Изолированный Iframe Холст]:::sandbox
-    WYSIWYG[✏️ Двойной Клик WYSIWYG Правка Текста]:::sandbox
-    Blueprint[📐 Blueprint Чертежный Режим]:::sandbox
-    DnD[↕️ Drag & Drop Перестановка Секций]:::sandbox
-
-    Agent -->|live_canvas_create_* / инструменты| Store
-    Watcher -->|Автосинхронизация файлов| Store
-    Store --> Bundler
-    Artifacts --> Store
-    Themes --> SandboxFrame
-    Bundler --> SandboxFrame
-
-    WebUI --> EditorDrawer
-    WebUI --> ArtifactsModal
-    WebUI --> BlocksModal
-    WebUI --> Storybook
-    WebUI --> SandboxFrame
-
-    SandboxFrame --> WYSIWYG
-    SandboxFrame --> Blueprint
-    SandboxFrame --> DnD
-    WYSIWYG -->|POST /api/save-content| Watcher
-    DnD -->|POST /api/save-reorder| Watcher
-```
+**`dsh-live-canvas`** превращает DeepSeek Harness в ультрасовременную визуальную среду frontend-разработки и генерации интерактивных артефактов с **30 инструментами агента**:
+- **🗄️ Retool-Style CRUD Admin Studio**: Таблицы данных с поиском, фильтрами статусов, модалками создания/редактирования и экспортом в CSV.
+- **⏳ Time-Travel Debugger & Слайдер истории**: Пошаговая отмотка верстки и состояния назад/вперед во времени без ручных git checkout.
+- **🌍 1-Click Multi-Platform Web Deploy**: Мгновенная сборка для **Vercel**, **Cloudflare Pages**, **Netlify** и **GitHub Gist**.
+- **🎨 Figma & Penpot Vector Bridge**: Двусторонняя конвертация векторного SVG из Figma в чистый Tailwind JSX/HTML и экспорт векторных слоев.
+- **🔊 UI Sound FX & Микро-звуки**: Саунд-дизайн интерфейсов через синтезатор Web Audio API (клики, переключатели, саксесс-джинглы).
+- **📋 Набор Effective HTML**: Low-fi вайрфреймы, персистентные роадмапы, живые схемы архитектуры и многошаговые визарды.
+- **💬 Интерактивные карточки в чате**: Живой превью прямо в сообщениях чата с кнопкой открытия в Live Canvas в 1 клик.
 
 ---
 
-## ✨ Pro Studio & Effective HTML Suite
-
-### 1. Архетипы интерактивных HTML-артефактов
-- **Low-Fi Вайрфреймы (`lib/wireframe.js` / Tool 21)**: Монохромные макеты со скелетон-текстом, диагональными блоками картинок и карточками.
-- **Интерактивные Роадмапы (`lib/plan.js` / Tool 22)**: Панели прогресса с приоритетами (`P0`/`P1`/`P2`), чекбоксами и автосохранением в `localStorage`.
-- **Живые Архитектурные Схемы (`lib/diagram.js` / Tool 23)**: Интерактивные графы узлов с анимацией потоков данных и инспектором сервисов.
-- **Многошаговые Прототипы (`lib/prototype.js` / Tool 24)**: Интерактивные визарды с плавной анимацией шагов и валидацией форм.
-- **Резолюция Аннотаций (`lib/store.js` / Tool 25)**: Управление статусами правок (`open` / `resolved`) с фиксацией ответа агента.
-
-### 2. Многофайловый рекурсивный ESM-бандлер (`lib/transpiler.js`)
-- Автопоиск и сборка локальных импортов (`.jsx`, `.tsx`, `.vue`, `.css`) и безопасная раздача ассетов через `GET /dsh-live-canvas/assets/*`.
-
-### 3. Split-View редактор кода (`lib/client.js`)
-- Выдвижная панель моноширинного редактора с двусторонней синхронизацией в реальном времени.
-
-### 4. AI Theme Tokens Engine (`lib/themes.js`)
-- Переключение дизайн-систем в 1 клик: *Linear Dark*, *Vercel Clean*, *Swiss Editorial*, *Glassmorphism Neon*, *Cyberpunk Terminal*.
-
-### 5. Автономный аудит верстки (Tool 18: `live_canvas_visual_audit`)
-- Проверка DOM на вылезающий текст, нарушения контрастности WCAG и проблемы с адаптивностью.
-
-### 6. Студия микро-анимаций (`lib/motion.js`)
-- Пресеты пружинной анимации и кейфреймов (*Staggered Fade-Up*, *3D Hover Tilt*, *Ambient Glow*).
-
-### 7. Генератор мок-данных (Tool 19: `live_canvas_generate_mock`)
-- Заполнение таблиц, карточек и графиков моками (*Пользователи*, *Товары E-Commerce*, *Аналитика*).
-
-### 8. Мобильное тестирование по QR-коду (Tool 20: `live_canvas_share`)
-- Генерация QR-кода для мгновенного открытия верстки на смартфоне по Wi-Fi.
-
----
-
-## 🛠️ Справочник инструментов агента (25 инструментов)
+## 🛠️ Справочник инструментов агента (30 инструментов)
 
 | Имя инструмента | Назначение | Результат / Действие |
 |---|---|---|
@@ -146,30 +67,18 @@ graph TD
 | `live_canvas_create_diagram` | Генерация живой интерактивной схемы архитектуры и потоков данных | `previewUrl`, `diagramType` |
 | `live_canvas_create_prototype` | Генерация многошагового интерактивного прототипа (визарда) | `previewUrl`, `flowType` |
 | `live_canvas_resolve_annotation` | Пометка визуального замечания как решенного с фиксацией ответа | `status: 'resolved'` |
+| `live_canvas_create_crud` | Генерация Retool-style CRUD админ-панели с таблицей и модалками | `previewUrl`, `entityName` |
+| `live_canvas_timetravel` | Пошаговый просмотр истории ревизий и откат на любой снимок | `timetravelUrl`, `snapshotsCount` |
+| `live_canvas_instant_deploy` | Формирование пакета деплоя для Vercel, Cloudflare, Netlify, Gist | `downloadUrl`, `instructions` |
+| `live_canvas_figma_bridge` | Конвертация SVG-макета Figma в Tailwind или экспорт в векторный SVG | `action`, `componentName` |
+| `live_canvas_sound_fx` | Саунд-дизайн интерфейсов через Web Audio API (клики, джинглы) | `presetsCount`, `soundType` |
 
 ---
 
 ## 📦 Быстрая установка
 
-Установка в профиль DeepSeek Harness одной командой:
-
 ```bash
 dsh plugin --profile web add @goodandready/dsh-live-canvas
-```
-
----
-
-## ⚙️ Конфигурация (`settings.yaml`)
-
-```yaml
-plugins:
-  "@goodandready/dsh-live-canvas":
-    defaultViewport: "responsive" # Варианты: responsive, mobile, tablet, matrix
-    autoOpenOnHtmlGen: true       # Автооткрытие вкладки Live Canvas при генерации верстки
-    enableHotReload: true         # SSE горячая перезагрузка при обновлении кода
-    maxSessionCache: 50           # Максимум сессий превью в LRU кэше
-    enableFileWatcher: true       # Включение наблюдателя файлов рабочей директории
-    workspaceDir: ""              # Кастомный путь к проекту (по умолчанию — текущий)
 ```
 
 ---

@@ -2,7 +2,7 @@
 
 <div align="center">
 
-<h3>交互式可视化前端开发工作室、Effective HTML 设计构件 (线框图、交互式计划、动态架构图、多步原型)、Split-View 代码编辑器及一键 Vite 导出工具 (适用于 DeepSeek Harness)</h3>
+<h3>交互式可视化前端开发工作室、Retool 风格 CRUD 数据看板、Time-Travel 时间旅行调试器、多平台一键部署 (Vercel, Cloudflare, Netlify, Gist)、Figma 矢量桥接及 30 个智能体工具 (适用于 DeepSeek Harness)</h3>
 
 <p align="center">
   <a href="https://www.npmjs.com/package/@goodandready/dsh-live-canvas"><img src="https://img.shields.io/npm/v/@goodandready/dsh-live-canvas.svg?style=for-the-badge&color=6366f1&labelColor=1e1b4b" alt="npm version"></a>
@@ -25,18 +25,20 @@
 
 ---
 
-## ⚡ 核心理念："Fat Artifacts + Fat Context"
+## ⚡ 里程碑 v0.2.0 核心能力
 
-受 *The Unreasonable Effectiveness of HTML* 与 Plannotator 启发，**`dsh-live-canvas`** 将 DeepSeek Harness 升级为免配置的交互式可视化前端工作室。通过生成**自包含交互式 HTML 构件**取代冗长的文本回复：
-- **📐 低保真线框图 (Wireframes)**：单色蓝图模式，快速验证信息层级与交互流程；
-- **📋 交互式项目路线图 (Plans)**：发布准备就绪面板，支持里程碑勾选与 `localStorage` 本地状态持久化；
-- **📊 动态架构关系图 (Living Diagrams)**：支持缩放、拖拽与动态数据流动画的交互式节点图；
-- **🧪 多步骤交互原型 (Prototypes)**：多屏向导流程、表单状态机与模拟后端响应；
-- **✍️ 可视化批注闭环**：画布批注一键标记解决并记录智能体回复。
+**`dsh-live-canvas`** 将 DeepSeek Harness 升级为下一代可视化前端开发工作室与交互式构件运行环境，包含 **30 个智能体工具**：
+- **🗄️ Retool 风格 CRUD 看板**：可搜索数据表格、状态筛选器、新增/编辑弹窗及 CSV 导出。
+- **⏳ Time-Travel 时间旅行调试器**：无需手动 Git 检出即可在历史快照间前后滑动对比并一键回滚。
+- **🌍 一键多平台 Web 部署**：秒级生成 **Vercel**、**Cloudflare Pages**、**Netlify** 与 **GitHub Gist** 部署包。
+- **🎨 Figma & Penpot 矢量桥接**：Figma SVG 矢量代码与 Tailwind 组件双向转换及图层导出。
+- **🔊 UI 音效与微交互**：基于 Web Audio API 的触觉反馈音频合成 (点击、切换、成功提示音)。
+- **📋 Effective HTML 构件库**：低保真线框图、持久化路线图、动态架构图与多步向导。
+- **💬 对话框内交互式预览卡片**：在聊天消息中直接操作嵌入式预览，并支持一键唤起侧边栏 Live Canvas 工作区。
 
 ---
 
-## 🛠️ 智能体工具一览表 (共 25 个)
+## 🛠️ 智能体工具一览表 (共 30 个)
 
 | 工具名称 | 功能描述 | 输出与响应 |
 |---|---|---|
@@ -65,12 +67,15 @@
 | `live_canvas_create_diagram` | 生成动态交互式架构系统关系与数据流向图 | `previewUrl`, `diagramType` |
 | `live_canvas_create_prototype` | 生成包含平滑转场的多步骤交互向导原型 | `previewUrl`, `flowType` |
 | `live_canvas_resolve_annotation` | 将画布上的用户批注标记为已解决并记录说明 | `status: 'resolved'` |
+| `live_canvas_create_crud` | 生成包含搜索、筛选与弹窗的 Retool 风格 CRUD 数据看板 | `previewUrl`, `entityName` |
+| `live_canvas_timetravel` | 历史版本时间旅行滑动对比与一键回滚 | `timetravelUrl`, `snapshotsCount` |
+| `live_canvas_instant_deploy` | 生成适用于 Vercel、Cloudflare、Netlify 与 Gist 的部署包 | `downloadUrl`, `instructions` |
+| `live_canvas_figma_bridge` | Figma SVG 矢量代码转换为 Tailwind 组件或导出 SVG | `action`, `componentName` |
+| `live_canvas_sound_fx` | Web Audio 交互音效合成与预览 (点击、弹窗、成功音) | `presetsCount`, `soundType` |
 
 ---
 
 ## 📦 安装说明
-
-在 DeepSeek Harness 环境中一键安装：
 
 ```bash
 dsh plugin --profile web add @goodandready/dsh-live-canvas
