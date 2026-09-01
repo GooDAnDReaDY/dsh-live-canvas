@@ -2,7 +2,7 @@
 
 <div align="center">
 
-<h3>交互式可视化前端开发工作室、Split-View 代码编辑器、组件 Storybook UI Kit、动画工坊、AI 设计系统引擎及一键 Vite 打包导出工具 (适用于 DeepSeek Harness)</h3>
+<h3>交互式可视化前端开发工作室、Effective HTML 设计构件 (线框图、交互式计划、动态架构图、多步原型)、Split-View 代码编辑器及一键 Vite 导出工具 (适用于 DeepSeek Harness)</h3>
 
 <p align="center">
   <a href="https://www.npmjs.com/package/@goodandready/dsh-live-canvas"><img src="https://img.shields.io/npm/v/@goodandready/dsh-live-canvas.svg?style=for-the-badge&color=6366f1&labelColor=1e1b4b" alt="npm version"></a>
@@ -25,19 +25,18 @@
 
 ---
 
-## ⚡ 概述与核心痛点
+## ⚡ 核心理念："Fat Artifacts + Fat Context"
 
-在 AI 智能体工作区中开发与调试前端组件时，通常面临以下瓶颈：
-- **盲目代码生成**：智能体生成 HTML/JSX 代码后，开发者必须切换到外部浏览器或构建工具查看效果；
-- **状态丢失**：常规重载会重置组件内部状态及响应式断点；
-- **多文件引用失效**：组件经常引用本地子模块 (`./Header.jsx`, `./theme.css`, `./data.js`) 或本地图片；
-- **微调成本高昂**：调整主题、动画或文案需要发起完整的对话往返。
-
-**`dsh-live-canvas`** 将 DeepSeek Harness 升级为免配置的交互式可视化前端工作室。提供实时热重载画布、递归多文件 ESM 打包器、双击内联 WYSIWYG 文本编辑、悬浮式 Tailwind 样式微调条、Split-View 分屏代码抽屉、自动 Storybook UI Kit 生成器、画布区块拖拽排版、AI 主题令牌引擎、微动效工坊、Mock 数据生成器、手机端 QR 码即时分享及一键 Vite 项目导出。
+受 *The Unreasonable Effectiveness of HTML* 与 Plannotator 启发，**`dsh-live-canvas`** 将 DeepSeek Harness 升级为免配置的交互式可视化前端工作室。通过生成**自包含交互式 HTML 构件**取代冗长的文本回复：
+- **📐 低保真线框图 (Wireframes)**：单色蓝图模式，快速验证信息层级与交互流程；
+- **📋 交互式项目路线图 (Plans)**：发布准备就绪面板，支持里程碑勾选与 `localStorage` 本地状态持久化；
+- **📊 动态架构关系图 (Living Diagrams)**：支持缩放、拖拽与动态数据流动画的交互式节点图；
+- **🧪 多步骤交互原型 (Prototypes)**：多屏向导流程、表单状态机与模拟后端响应；
+- **✍️ 可视化批注闭环**：画布批注一键标记解决并记录智能体回复。
 
 ---
 
-## 🛠️ 智能体工具一览表 (共 20 个)
+## 🛠️ 智能体工具一览表 (共 25 个)
 
 | 工具名称 | 功能描述 | 输出与响应 |
 |---|---|---|
@@ -61,6 +60,11 @@
 | `live_canvas_visual_audit` | 自动化视觉审计：检查溢出、色彩对比度与响应式断点 | `score`, `issuesCount`, `issues` |
 | `live_canvas_generate_mock`| 生成逼真的 JSON Mock 数据集并挂载至沙箱拦截器 | `datasetType`, `mockData` |
 | `live_canvas_share` | 生成手机端实时预览二维码及局域网共享链接 | `shareUrl`, `qrSvg` |
+| `live_canvas_create_wireframe` | 生成低保真结构蓝图线框图 HTML 构件 | `previewUrl`, `layout` |
+| `live_canvas_create_plan` | 生成包含持久化状态的交互式发布计划与路线图 | `previewUrl`, `version` |
+| `live_canvas_create_diagram` | 生成动态交互式架构系统关系与数据流向图 | `previewUrl`, `diagramType` |
+| `live_canvas_create_prototype` | 生成包含平滑转场的多步骤交互向导原型 | `previewUrl`, `flowType` |
+| `live_canvas_resolve_annotation` | 将画布上的用户批注标记为已解决并记录说明 | `status: 'resolved'` |
 
 ---
 
