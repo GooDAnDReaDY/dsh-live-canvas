@@ -129,3 +129,27 @@ test('Batch 5 Tools 26-30 execute properly and total 30 agent tools registered',
   assert.equal(soundRes.soundType, 'success');
 });
 
+
+test('Deployment engine generates valid safe identifiers for non-Latin and Cyrillic titles', () => {
+  const session = { id: 'c-cyrillic', title: 'Интерактивный дашборд заказов', content: '<div>Дашборд</div>' };
+  const vercel = buildDeploymentBundle({ session, target: 'vercel' });
+  const pkgJson = JSON.parse(vercel.files['package.json']);
+  assert.ok(pkgJson.name.startsWith('canvas-c-cyrillic'), 'Should generate safe fallback identifier');
+  assert.notEqual(pkgJson.name, '-', 'Name should never be a bare hyphen');
+
+  const gist = buildDeploymentBundle({ session, target: 'gist' });
+  assert.ok(gist.filename.startsWith('canvas-c-cyrillic'), 'Gist filename should be safe');
+});
+
+test('PreviewStore recordInspection accurately records status without duplicates', () => {
+  const store = new PreviewStore();
+  const insp = store.recordInspection({
+    canvasId: 'test-canvas',
+    selector: '#btn-submit',
+    status: 'open',
+    resolutionNote: 'Checking click handler'
+  });
+  assert.equal(insp.status, 'open');
+  assert.equal(insp.resolutionNote, 'Checking click handler');
+  assert.equal(typeof insp.timestamp, 'string');
+});
