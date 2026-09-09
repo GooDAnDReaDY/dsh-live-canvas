@@ -37,6 +37,18 @@
 
 ---
 
+
+## 🧭 侧边栏布局与兼容性 (Sidebar Compatibility)
+
+`@goodandready/dsh-live-canvas` 无缝支持所有 DSH 导航布局，且无需任何外部插件依赖：
+
+| DSH 环境 | 支持的界面组件 | 功能特性 |
+|---|---|---|
+| **DSH 0.1.5-alpha.1+ (原生)** | 原生右侧边栏 (`sidebarRightTabs`, `sidebar.right.pane.tab`) | 完整的 Live Canvas 工作区标签页 + `dsh-resource://file` 原生文件查看器。 |
+| **传统配置文件** | `dsh-better-sidebar` 适配 | 独立标签页 (`live-canvas`) 与文件查看器 (`live-canvas-viewer`)。 |
+| **双边栏同时启用** | 完美共存 | 确定性独立 ID，杜绝重复挂载，具备幂等清理功能。 |
+| **无边栏环境** | 独立抽屉与模态窗口 | 纯自包含 slide-over 抽屉及快捷键 (`Alt+C`)。 |
+
 ## 🏛️ 系统架构关系图
 
 ```mermaid
