@@ -1,7 +1,8 @@
 # AGENTS.md for dsh-live-canvas
 
 ## Project Scope
-- Plugin: `@goodandready-private/dsh-live-canvas`
+- Plugin: package identity определяется текущим `package.json`; исторический
+  scope не переименовывать без отдельной задачи миграции.
 - Architecture: DeepSeek Harness Cordis plugin + Web client
 - Base Directory: `dhsplugins/dsh-live-canvas`
 
