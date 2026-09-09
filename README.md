@@ -37,6 +37,18 @@ Inspired by Thariq Shihipar's *The Unreasonable Effectiveness of HTML*, Plannota
 
 ---
 
+
+## 🧭 Sidebar Layouts & Surface Compatibility
+
+`@goodandready/dsh-live-canvas` supports all DSH navigation layouts with zero external dependencies:
+
+| Environment | Supported Surface | Capabilities |
+|---|---|---|
+| **DSH 0.1.5-alpha.1+ (Native)** | Native Right Sidebar (`sidebarRightTabs`, `sidebar.right.pane.tab`) | Full Live Canvas workspace tab + native file viewer for `dsh-resource://file` (`.html`, `.jsx`, `.tsx`, `.svg`, `.mermaid`, `.md`). |
+| **Legacy DSH Profiles** | `dsh-better-sidebar` integration | Dedicated tab (`live-canvas`) and registered file viewer (`live-canvas-viewer`). |
+| **Dual Profiles (Both enabled)** | Coexists seamlessly | Distinct, deterministic IDs (`@goodandready/dsh-live-canvas` vs `live-canvas`), no duplicate mounting, independent cleanup disposers. |
+| **Minimal / Standalone Profiles** | Standalone Drawer & Modals | Self-contained slide-over drawer with hotkeys (`Alt+C`), zero reliance on external sidebar plugins. |
+
 ## 🏛️ System Architecture
 
 ```mermaid
