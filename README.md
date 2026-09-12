@@ -21,6 +21,16 @@
   <a href="README.zh.md"><b>🇨🇳 中文说明</b></a>
 </p>
 
+<table align="center">
+  <tr>
+    <td align="center">
+      ⭐ <strong>If you like this plugin, please star it on GitHub</strong> — it shows me that the plugin is useful to you and motivates me to keep developing it.
+      <br><br>
+      🐛 <strong>If you find a bug or would like to request a feature</strong>, open a GitHub issue in any language — I will review your proposal and implement useful suggestions in a future plugin version.
+    </td>
+  </tr>
+</table>
+
 </div>
 
 ---
@@ -36,7 +46,6 @@ When coding assistants work in standard terminal or chat windows, they typically
 Inspired by Thariq Shihipar's *The Unreasonable Effectiveness of HTML*, Plannotator, and modern visual studios (Figma, Retool, V0), **`@goodandready/dsh-live-canvas`** transforms DeepSeek Harness into a complete, standalone frontend development suite. It provides in-memory ESM bundling, real-time SSE hot-reloading, in-chat interactive preview cards, a split-view code editor, time-travel history debugging, 1-click cloud deployment, and **30 dedicated Agent Tools**.
 
 ---
-
 
 ## 🧭 Sidebar Layouts & Surface Compatibility
 

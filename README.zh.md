@@ -21,6 +21,16 @@
   <a href="README.zh.md"><b>🇨🇳 中文说明</b></a>
 </p>
 
+<table align="center">
+  <tr>
+    <td align="center">
+      ⭐ <strong>如果您喜欢这个插件，请在 GitHub 上为它点亮 Star</strong> — 这能让我知道插件对您有用，并鼓励我继续开发和维护它。
+      <br><br>
+      🐛 <strong>如果您发现 Bug 或希望增加功能</strong>，请使用任意语言在 GitHub 上提交 Issue — 我会评估您的建议，并在后续版本中实现有价值的改进。
+    </td>
+  </tr>
+</table>
+
 </div>
 
 ---
@@ -36,7 +46,6 @@
 受 *The Unreasonable Effectiveness of HTML*、Plannotator 与现代可视化设计平台启发，**`@goodandready/dsh-live-canvas`** 将 DeepSeek Harness 升级为完整的独立前端开发与构件运行环境。提供内存级 ESM 模块打包、SSE 热重载、对话框内实时预览卡片、分屏代码编辑器、版本时间旅行、多平台一键部署及 **30 个专用智能体工具**。
 
 ---
-
 
 ## 🧭 侧边栏布局与兼容性 (Sidebar Compatibility)
 
