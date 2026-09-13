@@ -2,7 +2,7 @@
 
 <div align="center">
 
-<h3>交互式前端开发工作室、Retool 风格 CRUD 数据看板引擎、Time-Travel 时间旅行调试器、多平台一键部署 (Vercel, Cloudflare, Netlify, Gist)、Figma 矢量桥接、UI 音效及 30 个智能体工具 (适用于 DeepSeek Harness)</h3>
+<h3>交互式前端开发工作室、Retool 风格 CRUD 数据看板引擎、Time-Travel 时间旅行调试器、多平台一键部署 (Vercel, Cloudflare, Netlify, Gist)、Figma 矢量桥接、UI 音效及 31 个智能体工具 (适用于 DeepSeek Harness)</h3>
 
 <p align="center">
   <a href="https://www.npmjs.com/package/@goodandready/dsh-live-canvas"><img src="https://img.shields.io/npm/v/@goodandready/dsh-live-canvas.svg?style=for-the-badge&color=6366f1&labelColor=1e1b4b" alt="npm version"></a>
@@ -143,8 +143,17 @@ graph TD
 | 28 | `live_canvas_instant_deploy` | 生成适用于 Vercel、Cloudflare、Netlify 与 Gist 的部署包 | `canvasId`, `target` | `downloadUrl`, `instructions` |
 | 29 | `live_canvas_figma_bridge` | Figma SVG 矢量代码转换为 Tailwind 组件或导出 SVG | `svg`, `action`, `canvasId` | `action`, `componentName` |
 | 30 | `live_canvas_sound_fx` | Web Audio 交互音效合成与预览 (点击、弹窗、成功音) | `action`, `soundType` | `presetsCount`, `soundType` |
+| 31 | `live_canvas_capture_snapshot` | 捕获当前画布元数据、DOM 树或完整 HTML 快照，实现视觉反馈闭环 | `canvasId`, `format` | `snapshot`, `format` |
 
 ---
+
+
+### 🛠️ 画布内置开发者工具与智能体闭环反馈
+- **迷你控制台抽屉 (Mini-Console Drawer)**：沙箱内拦截 `console.log/warn/error` 与 `window.onerror`，底部可折叠诊断抽屉与工具栏错误计数。
+- **组件状态预设切换器 (State Presets)**：工具栏一键切换 `Default`、`Loading`、`Empty`、`Error` 与 `Overflow` 状态。
+- **视觉反馈闭环 (Vision Snapshot Loop)**：`live_canvas_capture_snapshot` 工具让智能体可直接读取渲染后 DOM 结构与快照。
+- **单文件独立 HTML 导出**：一键导出完全内联的独立 HTML 演示包 (`/dsh-live-canvas/api/standalone`)。
+- **W3C 设计令牌解析器 (Design Tokens Bridge)**：一键解析 W3C / Figma Design Tokens JSON 并注入 CSS 变量。
 
 ## 📦 安装说明
 

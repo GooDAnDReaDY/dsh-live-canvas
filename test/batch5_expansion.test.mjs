@@ -88,7 +88,11 @@ test('Batch 5 Tools 26-30 execute properly and total 30 agent tools registered',
   registerLiveCanvasTools(fakeCtx, store, eventHub);
 
   // Exactly 30 agent tools
-  assert.equal(registeredTools.size, 30, 'All 30 agent tools must be registered');
+  assert.equal(registeredTools.size, 31, 'All 31 agent tools must be registered');
+  const snapTool = registeredTools.get('live_canvas_capture_snapshot');
+  assert.ok(snapTool, 'live_canvas_capture_snapshot tool must be registered');
+  const snapRes = await snapTool.execute({ format: 'metadata' });
+  assert.equal(snapRes.success, true);
 
   // Tool 26: live_canvas_create_crud
   const crudTool = registeredTools.get('live_canvas_create_crud');

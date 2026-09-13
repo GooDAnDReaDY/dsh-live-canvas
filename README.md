@@ -2,7 +2,7 @@
 
 <div align="center">
 
-<h3>Interactive Visual Frontend Studio, Retool-Style CRUD Admin Engine, Time-Travel Debugger, 1-Click Multi-Deploy (Vercel, Cloudflare, Netlify, Gist), Figma Vector Bridge, Effective HTML Artifacts, UI Sound FX, and 30 Agent Tools for DeepSeek Harness</h3>
+<h3>Interactive Visual Frontend Studio, Retool-Style CRUD Admin Engine, Time-Travel Debugger, 1-Click Multi-Deploy (Vercel, Cloudflare, Netlify, Gist), Figma Vector Bridge, Effective HTML Artifacts, UI Sound FX, and 31 Agent Tools for DeepSeek Harness</h3>
 
 <p align="center">
   <a href="https://www.npmjs.com/package/@goodandready/dsh-live-canvas"><img src="https://img.shields.io/npm/v/@goodandready/dsh-live-canvas.svg?style=for-the-badge&color=6366f1&labelColor=1e1b4b" alt="npm version"></a>
@@ -202,8 +202,17 @@ graph TD
 | 28 | `live_canvas_instant_deploy` | Generates ready-to-ship bundle for Vercel, Cloudflare, Netlify, Gist | `canvasId`, `target` | `downloadUrl`, `instructions` |
 | 29 | `live_canvas_figma_bridge` | Converts Figma SVG vector code to Tailwind or exports component SVG | `svg`, `action`, `canvasId` | `action`, `componentName` |
 | 30 | `live_canvas_sound_fx` | Synthesizes and previews Web Audio UI feedback sounds | `action`, `soundType` | `presetsCount`, `soundType` |
+| 31 | `live_canvas_capture_snapshot` | Captures visual canvas metadata, DOM tree, or HTML for agent visual feedback | `canvasId`, `format` | `snapshot`, `format` |
 
 ---
+
+
+### 🛠️ In-Canvas DevTools & Diagnostic Feedback Loop
+- **Mini-Console Drawer**: Real-time log/warn/error interception inside the sandbox with collapsible bottom drawer, level filtering, and toolbar badge count.
+- **Component State Presets Switcher**: Instant switching between `Default`, `Loading`, `Empty`, `Error`, and `Overflow` states via toolbar selector and DOM event triggers.
+- **Agent Vision Feedback Loop**: `live_canvas_capture_snapshot` lets coding agents query DOM structure or extract complete rendered HTML snapshots.
+- **Standalone Single-File HTML Export**: 1-click single-file bundle export at `/dsh-live-canvas/api/standalone` embedding all fonts, Tailwind, and scripts.
+- **W3C Design Tokens Bridge**: Parses W3C / Figma design token JSON structures into live CSS custom properties.
 
 ## 📦 Installation
 
