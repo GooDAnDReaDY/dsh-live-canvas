@@ -164,3 +164,44 @@ test('Feature: parseDesignTokens converts W3C / Figma tokens JSON to CSS variabl
   const jsonStrRes = parseDesignTokens(JSON.stringify(tokens));
   assert.equal(jsonStrRes.variableCount, 5);
 });
+
+test('Schema Audit: All registered tools have strict JSON schemas conforming to dsh-tools', () => {
+  const store = new PreviewStore();
+  const eventHub = new EventHub();
+  const tools = [];
+  const mockCtx = {
+    tools: {
+      register: (t) => tools.push(t)
+    }
+  };
+
+  registerLiveCanvasTools(mockCtx, store, eventHub, { workspaceDir: process.cwd() });
+  assert.equal(tools.length, 31, 'Must register 31 tools');
+
+  function validateSchema(schema, path) {
+    if (!schema || typeof schema !== 'object') return;
+    if (schema.type === 'object') {
+      if (schema.additionalProperties === undefined && !schema.properties) {
+        assert.fail(`Schema violation at ${path}: object schema must have additionalProperties or properties`);
+      }
+    }
+    if (schema.properties) {
+      for (const [key, prop] of Object.entries(schema.properties)) {
+        if (prop && typeof prop === 'object') {
+          if (prop.type === 'object') {
+            assert.ok(
+              typeof prop.additionalProperties === 'boolean' || prop.properties !== undefined,
+              `Schema violation at ${path}.properties.${key}: schema.properties.${key}.additionalProperties must be explicitly true or false`
+            );
+          }
+          validateSchema(prop, `${path}.${key}`);
+        }
+      }
+    }
+  }
+
+  for (const t of tools) {
+    if (t.parameters) validateSchema(t.parameters, `${t.name}.parameters`);
+    if (t.output && t.output.schema) validateSchema(t.output.schema, `${t.name}.output.schema`);
+  }
+});
