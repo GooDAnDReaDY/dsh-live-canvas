@@ -2,7 +2,7 @@
 
 <div align="center">
 
-<h3>Интерактивная дизайн-студия, Retool-подобная CRUD фабрика, Time-Travel отладчик, мгновенный деплой (Vercel, Cloudflare, Netlify, Gist), Figma Vector Bridge, Effective HTML артефакты, саунд-дизайн и 30 инструментов агента для DeepSeek Harness</h3>
+<h3>Интерактивная дизайн-студия, Retool-подобная CRUD фабрика, Time-Travel отладчик, мгновенный деплой (Vercel, Cloudflare, Netlify, Gist), Figma Vector Bridge, Effective HTML артефакты, саунд-дизайн и 31 инструмент агента для DeepSeek Harness</h3>
 
 <p align="center">
   <a href="https://www.npmjs.com/package/@goodandready/dsh-live-canvas"><img src="https://img.shields.io/npm/v/@goodandready/dsh-live-canvas.svg?style=for-the-badge&color=6366f1&labelColor=1e1b4b" alt="npm version"></a>
@@ -202,8 +202,17 @@ graph TD
 | 28 | `live_canvas_instant_deploy` | Формирование пакета деплоя (Vercel, Cloudflare, Netlify, Gist) | `canvasId`, `target` | `downloadUrl`, `instructions` |
 | 29 | `live_canvas_figma_bridge` | Конвертация SVG Figma в Tailwind или экспорт в SVG | `svg`, `action`, `canvasId` | `action`, `componentName` |
 | 30 | `live_canvas_sound_fx` | Синтез и воспроизведение тактильных микро-звуков UI | `action`, `soundType` | `presetsCount`, `soundType` |
+| 31 | `live_canvas_capture_snapshot` | Захват метаданных, DOM-структуры или полного HTML холста для фидбека | `canvasId`, `format` | `snapshot`, `format` |
 
 ---
+
+
+### 🛠️ Встроенные DevTools холста и визуальный цикл обратной связи
+- **Встроенная мини-консоль (Mini-Console Drawer)**: перехват `console.log/warn/error` и `window.onerror` из песочницы, сворачиваемая нижняя панель с фильтрацией и живой счетчик ошибок в тулбаре.
+- **Переключатель состояний компонентов (State Presets)**: мгновенный выбор состояний (`Default`, `Loading`, `Empty`, `Error`, `Overflow`) через выпадающий список тулбара и события DOM.
+- **Инструмент визуального фидбека агента**: `live_canvas_capture_snapshot` позволяет кодинг-агенту инспектировать структуру DOM или экспортировать полный HTML-снимок.
+- **Автономный экспорт в 1 HTML-файл**: готовая сборка со всеми стилями и скриптами по адресу `/dsh-live-canvas/api/standalone`.
+- **W3C Design Tokens мост**: конвертация дизайн-токенов W3C / Figma в живые CSS-переменные.
 
 ## 📦 Быстрая установка
 

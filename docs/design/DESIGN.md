@@ -108,3 +108,27 @@
 
 ## 8. Locked Design Decisions
 - `2026-09-10`: Полный переход на дизайн-систему `dsh-clinebot` с удалением всех хардкодных цветов тёмной темы. Причина: совместимость со светлой темой DSH и визуальное единообразие с экосистемой плагинов Good & Ready. Пересмотр возможен только при глобальном обновлении дизайн-системы самого ядра DSH.
+
+## 9. In-Canvas DevTools & Diagnostic Architecture
+- **Mini-Console Drawer (.dlc-console-drawer)**:
+  - Располагается снизу холста в виде сворачиваемой диагностической панели.
+  - Перехватывает вызовы console.log, console.warn, console.error, console.info и исключения window.onerror внутри песочницы (lib/sandbox.js).
+  - Передаёт структурированные события DLC_CONSOLE_LOG через postMessage в родительский фрейм.
+  - В тулбаре отображается живой бейдж ошибок (при появлении ошибок подсвечивается акцентным красным --dsw-alias-state-error-primary).
+  - Панель поддерживает фильтрацию по уровням (All, Errors, Warnings, Logs) и быструю очистку.
+
+- **Component State Presets Switcher**:
+  - Селектор пресетов в тулбаре (Default, Loading, Empty, Error, Overflow).
+  - Передаёт событие DLC_SET_STATE_PRESET в iframe, устанавливая атрибут data-state-preset на корневой элемент документа холста и инициируя кастомный CustomEvent dsh:state-preset-change.
+
+- **Vision Snapshot Feedback Loop**:
+  - Инструмент агента live_canvas_capture_snapshot для замыкания цикла обратной связи: агент может программно запросить текущее состояние холста (метаданные сессии, структуру DOM-дерева или полный HTML-снимок).
+
+- **Standalone Single-File HTML Export**:
+  - Функция buildStandaloneHtmlBundle и эндпоинт /dsh-live-canvas/api/standalone для скачивания полностью автономного HTML-файла со всеми инлайновыми стилями и скриптами для отправки заказчику.
+
+## 10. Localization Architecture (EN/ZH First-Class, External RU)
+- Внутренний код плагина (lib/*) содержит исключительно канонический английский (en) и зеркальный китайский (zh) словари.
+- Достигнут 100% паритет ключей между en и zh (75+ ключей интерфейса).
+- Принцип нулевого кириллического текста в lib/ контролируется автоматическим юнит-тестом test/features_and_locale_audit.test.mjs.
+- Русская локализация плагина вынесена в специализированный языковой пакет @goodandready/dsh-russian-lang (зарегистрировано Issue #188).
