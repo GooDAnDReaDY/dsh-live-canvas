@@ -112,6 +112,10 @@ graph TD
 ---
 
 ## ✨ Exhaustive Feature Breakdown
+- **🏠 Projects Hub & Recent Sessions (v0.2.14)**: Dedicated dashboard displaying all active preview sessions and workspace components (React, HTML, Vue, SVG, Markdown) sorted by activity, featuring instant search and 1-click loading.
+- **↕️ Interactive Chat Card Resizing**: Smooth vertical height resizing (160px to 800px) via drag handle, quick preset dimensions (`S` 200px, `M` 320px, `L` 480px), and Wide View mode (`⤢`).
+- **🔄 Dedicated In-Canvas Refresh**: Frame reload button in toolbar and support for <kbd>F5</kbd> / <kbd>Ctrl+R</kbd> shortcuts inside the canvas frame without reloading the DSH host application.
+- **🛡️ Defensive Tool Output Schemas**: AI agent tools return structured refusal metadata (`code`, `allowedRoots`, `reason`) on path policy violations, enabling autonomous model error recovery.
 
 ### 1. 🗄️ Retool-Style CRUD Admin Dashboard Studio (`lib/crud.js` / Tool 26)
 - **Instant Data Grids**: Generates full-featured data management micro-apps with live search, column sorting, and status filter pills (`Active`, `Pending`, `Suspended`).
@@ -254,6 +258,10 @@ plugins:
 
 | Action | Shortcut / Trigger | Result |
 |---|---|---|
+| **Instant Canvas Refresh** | Click **`🔄 Refresh`** or press <kbd>F5</kbd> / <kbd>Ctrl+R</kbd> | Reloads active preview frame without reloading DSH host |
+| **Chat Card Drag Resize** | Drag bottom border handle on chat preview | Smoothly resize chat preview height from 160px to 800px |
+| **Chat Card Wide Mode** | Click **`⤢`** in chat card header | Expands chat preview card to full message width |
+| **Projects Hub** | Select **`🏠 Projects Hub`** in toolbar dropdown | Open interactive project dashboard with recent sessions and file search |
 | **Inline WYSIWYG Text Edit** | Double-click text element on canvas | Edit heading/paragraph inline and save with <kbd>Enter</kbd> |
 | **Split-View Code Editor** | Click **`💻 Code`** in toolbar | Collapsible side-by-side code editor with live debounce sync |
 | **Blueprint Mode** | Click **`📐 Wireframe`** in toolbar | Toggles high-contrast monochromatic structural view |
