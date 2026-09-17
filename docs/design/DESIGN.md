@@ -134,10 +134,12 @@
 - Русская локализация плагина вынесена в специализированный языковой пакет @goodandready/dsh-russian-lang (зарегистрировано Issue #188).
 
 ## 11. Security Architecture & Unified Path Policy (v0.2.12, Refs: #107, #108, #116)
-- **Origin & Network Security (`lib/security.js`)**:
+- **Origin & Network Security (`lib/security.js`, Refs: #107)**:
   - Все мутирующие HTTP эндпоинты (`/api/open-file`, `/api/save-content`, `/api/save-reorder`, `/api/dsh-live-canvas/update`) валидируются через `isTrustedRequest` / `isTrustedUpdateRequest`.
   - Блокируются кросс-доменные запросы (`sec-fetch-site: cross-site`), проверяется совпадение Host/Origin и loopback/LAN IP.
-  - Запрещен открытый CORS wildcard (`Access-Control-Allow-Origin: *`).
+  - Полный запрет wildcard CORS (`Access-Control-Allow-Origin: *`):
+    - `lib/events.js`: SSE-поток событий выставляет `Access-Control-Allow-Origin` только для доверенного источника после проверки `isTrustedRequest(req)` (совпадение host/origin и loopback) и сопровождает заголовком `Vary: Origin`. Запросы от неавторизованных внешних источников заголовок не получают.
+    - `lib/sandbox.js`: в `getSandboxHeaders` полностью удалён fallback `allowOrigin = '*'`. Изоляция превью-документов гарантируется заголовком `X-Frame-Options: SAMEORIGIN` и строгим CSP (`default-src 'self' ...`). Никаких открытых CORS заголовков не генерируется.
 - **Единая политика путей (`resolveSafePath`)**:
   - Поддержка нескольких корней через `workspaceRoots: string[]` в настройках плагина и конфигурации DSH.
   - Защита от path traversal (`..`), символических ссылок (`fs.realpathSync` валидация) и выхода за границы разрешенных директорий.

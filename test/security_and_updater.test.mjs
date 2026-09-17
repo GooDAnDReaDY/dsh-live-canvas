@@ -15,6 +15,7 @@ import {
 } from '../lib/updater.js';
 import { PreviewStore } from '../lib/store.js';
 import { EventHub } from '../lib/events.js';
+import { getSandboxHeaders } from '../lib/sandbox.js';
 import { WorkspaceWatcher } from '../lib/watcher.js';
 import { registerLiveCanvasTools } from '../lib/tools.js';
 
@@ -217,4 +218,49 @@ test('WorkspaceWatcher enforces safe path policy and error handling', () => {
   } finally {
     fs.rmSync(tmpRoot, { recursive: true, force: true });
   }
+});
+
+test('Issue #107: EventHub and sandbox headers strictly eliminate wildcard CORS', () => {
+  const hub = new EventHub();
+
+  function makeMockReq(headers) {
+    return {
+      headers,
+      socket: { remoteAddress: '127.0.0.1' },
+      on() {},
+      removeListener() {}
+    };
+  }
+
+  let headersSent = null;
+  const mockRes = {
+    writeHead(status, headers) { headersSent = headers; },
+    write() {},
+    end() {},
+    on() {}
+  };
+
+  // Untrusted cross-site request: no wildcard CORS
+  const untrustedReq = makeMockReq({
+    origin: 'http://malicious-site.com',
+    host: 'localhost:3080',
+    'sec-fetch-site': 'cross-site'
+  });
+  hub.handleSseRequest(untrustedReq, mockRes);
+  assert.equal(headersSent['Access-Control-Allow-Origin'], undefined);
+
+  // Trusted same-origin request receives matching origin
+  const trustedReq = makeMockReq({
+    origin: 'http://localhost:3080',
+    host: 'localhost:3080'
+  });
+  hub.handleSseRequest(trustedReq, mockRes);
+  assert.equal(headersSent['Access-Control-Allow-Origin'], 'http://localhost:3080');
+
+  // getSandboxHeaders default does NOT contain wildcard CORS
+  const sandboxHeaders = getSandboxHeaders();
+  assert.equal(sandboxHeaders['Access-Control-Allow-Origin'], undefined);
+  assert.equal(sandboxHeaders['X-Frame-Options'], 'SAMEORIGIN');
+
+  hub.closeAll();
 });
