@@ -1,3 +1,6 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import os from 'node:os';
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { PreviewStore } from '../lib/store.js';
@@ -76,4 +79,72 @@ test('PreviewStore records and retrieves element inspections', () => {
 
   store.clearInspections('canvas-1');
   assert.equal(store.getLastInspection('canvas-1'), null);
+});
+
+test('Issue #123: PreviewStore survives harness restart, filters deleted files, and preserves persistence on shutdown', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'dsh-store-test-'));
+  const persistencePath = path.join(tmpDir, 'sessions.json');
+  const validFile = path.join(tmpDir, 'app.html');
+  const deletedFile = path.join(tmpDir, 'deleted.html');
+
+  fs.writeFileSync(validFile, '<h1>Version 1</h1>', 'utf8');
+  fs.writeFileSync(deletedFile, '<h1>Temporary</h1>', 'utf8');
+
+  // Instance 1: active session lifecycle
+  const store1 = new PreviewStore({ persistencePath, maxSessions: 10 });
+  store1.createOrUpdateSession({
+    id: 'canvas-valid',
+    title: 'Valid App',
+    filePath: validFile,
+    content: '<h1>Version 1</h1>'
+  });
+  store1.createOrUpdateSession({
+    id: 'canvas-virtual',
+    title: 'Virtual Component',
+    content: '<button>Click</button>'
+  });
+  store1.createOrUpdateSession({
+    id: 'canvas-deleted',
+    title: 'Deleted File',
+    filePath: deletedFile,
+    content: '<h1>Temporary</h1>'
+  });
+
+  // Flush to disk explicitly
+  store1.flush();
+  assert.ok(fs.existsSync(persistencePath), 'sessions.json must exist after flush');
+
+  // Simulate harness shutdown: store.clear(false) does NOT wipe disk
+  store1.clear(false);
+  assert.equal(store1.sessions.size, 0);
+
+  // File on disk must STILL exist and contain saved data
+  const rawAfterClear = JSON.parse(fs.readFileSync(persistencePath, 'utf8'));
+  assert.equal(rawAfterClear.sessions.length, 3, 'Disk payload must not be wiped by memory clearance');
+
+  // Mutate valid file on disk and unlink deleted file
+  fs.writeFileSync(validFile, '<h1>Version 2 (Mutated on disk)</h1>', 'utf8');
+  fs.unlinkSync(deletedFile);
+
+  // Instance 2: harness restart restores sessions
+  const store2 = new PreviewStore({ persistencePath, maxSessions: 10 });
+
+  // canvas-valid must be restored and live content reloaded from disk
+  const restored1 = store2.getSession('canvas-valid');
+  assert.ok(restored1, 'canvas-valid must be restored');
+  assert.equal(restored1.content, '<h1>Version 2 (Mutated on disk)</h1>', 'Live content must be updated from existing file');
+
+  // canvas-virtual must be restored
+  const restored2 = store2.getSession('canvas-virtual');
+  assert.ok(restored2, 'canvas-virtual must be restored');
+  assert.equal(restored2.content, '<button>Click</button>');
+
+  // canvas-deleted must be discarded gracefully
+  const restored3 = store2.getSession('canvas-deleted');
+  assert.equal(restored3, null, 'Session bound to deleted filePath must be filtered out');
+
+  // Clean up test sandbox
+  try {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  } catch (err) { /* bestEffort */ }
 });
