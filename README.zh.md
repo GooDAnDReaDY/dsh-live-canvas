@@ -176,7 +176,26 @@ plugins:
     maxSessionCache: 50           # 内存 LRU 缓存中保留的最大活跃会话数
     enableFileWatcher: true       # 启用工作区文件变动实时监控
     workspaceDir: ""              # 自定义工程根路径 (默认当前工作目录)
+    workspaceRoots: []            # 安全沙箱明确允许的工作区根目录列表
 ```
+
+---
+
+## 🔒 安全机制与路径沙箱
+
+Live Canvas 具备企业级防御与沙箱隔离机制：
+- **严格路径沙箱 (`resolveSafePath`)**：所有通过 API 和智能体工具 (`live_canvas_preview`、`/dsh-live-canvas/api/open-file`、`/dsh-live-canvas/api/workspace/files`) 访问文件的请求必须严格位于授权工作区根目录 (`workspaceRoots` 或当前工作目录) 内部。企图跨越至父级敏感目录（如 `/etc` 或同级未授权目录）的操作均会被拦截，返回 `ERR_PATH_OUTSIDE_ROOTS` 及 HTTP 403 Forbidden。
+- **CSRF 与源验证 (`isTrustedRequest`)**：所有写操作端点均校验同源请求头 (`Sec-Fetch-Site: same-origin`、`Origin` 或 `Referer`) 或本地回环网络调用。
+- **内容安全策略 (CSP)**：画布预览于沙箱 iframe 中呈现，具备严格安全策略 (`X-Frame-Options: SAMEORIGIN`、`X-Content-Type-Options: nosniff` 等)。
+
+---
+
+## 🔄 宿主一键更新器
+
+Live Canvas 集成了符合 DSH 插件规范的宿主一键更新器：
+- **自动检查版本**：定时查询 `registry.npmjs.org`，完整支持 semver 预发布版本比较。
+- **设置卡片 UI 集成**：清晰展示当前版本、最新版本状态及一键更新按钮。
+- **宿主安全安装**：通过本地包管理器 (`pnpm` / `dsh plugin add`) 升级，并受本地回环与 `X-DSH-Update-Key` 鉴权保护。
 
 ---
 

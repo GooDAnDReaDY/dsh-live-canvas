@@ -235,6 +235,7 @@ plugins:
     maxSessionCache: 50           # Maximum active preview sessions in LRU memory cache
     enableFileWatcher: true       # Enable filesystem watcher for live project sync
     workspaceDir: ""              # Custom project root path (defaults to working directory)
+    workspaceRoots: []            # Explicit allowed workspace root directories for path sandboxing
 ```
 
 | Parameter | Type | Default | Description |
@@ -245,6 +246,7 @@ plugins:
 | `maxSessionCache` | `number` | `50` | Maximum number of active preview sessions kept in memory |
 | `enableFileWatcher` | `boolean` | `true` | Monitors workspace directory for file changes |
 | `workspaceDir` | `string` | `""` | Base directory for scanning workspace components |
+| `workspaceRoots` | `string[]` | `[]` | Explicit allowed root paths for file viewing and workspace scanning. Blocks path traversal outside allowed folders. |
 
 ---
 
@@ -261,6 +263,24 @@ plugins:
 | **Sound FX Toggle** | Click **`🔊 Sound`** in toolbar | Enables/disables synthesized Web Audio feedback |
 | **Inspect Element** | Click **`🔍 Inspect`** in toolbar | Click any DOM element to capture CSS selector and computed styles |
 | **Visual Annotations** | Click **`🖍 Annotate`** in toolbar | Draw bounding boxes and leave review comments for the agent |
+
+---
+
+## 🔒 Security & Sandboxing Architecture
+
+Live Canvas operates with enterprise-grade defensive sandboxing:
+- **Strict Path Sandboxing (`resolveSafePath`)**: All file access requests via API and agent tools (`live_canvas_preview`, `/dsh-live-canvas/api/open-file`, `/dsh-live-canvas/api/workspace/files`) must resolve within authorized workspace roots (`workspaceRoots` or the current process working directory). Attempts to traverse into sensitive parent directories (such as `/etc`, system binaries, or sibling folders) are rejected with `ERR_PATH_OUTSIDE_ROOTS` and HTTP 403 Forbidden.
+- **CSRF & Origin Verification (`isTrustedRequest`)**: Mutating endpoints require verified same-origin requests matching standard browser headers (`Sec-Fetch-Site: same-origin`, `Origin`, or `Referer`) or loopback authorization.
+- **Content Security Policy**: Canvas previews are rendered inside sandboxed iframes with strict CSP directives (`default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https: http:; X-Frame-Options: SAMEORIGIN; X-Content-Type-Options: nosniff`).
+
+---
+
+## 🔄 Host-Side 1-Click Updater
+
+Live Canvas includes an integrated host-side updater conforming to the DSH plugin standard:
+- **Automated Update Checking**: Background checking queries `registry.npmjs.org` for new releases, taking into account semver prereleases.
+- **DSH Card UI Integration**: Shows current vs latest version, "Check for Updates" button, and 1-click update trigger.
+- **Safe Host Installation**: Executes profile update using the local package manager (`pnpm` / `dsh plugin add`), verifying host loopback and authorization headers (`X-DSH-Update-Key`).
 
 ---
 
