@@ -168,3 +168,24 @@
     - Демо-шаблоны (калькулятор и аналитический дашборд) сохранены как вторичные быстрые пресеты в нижней части хаба.
 - **Defensive Tool Output Schemas & Refusal Semantics**:
   - Инструмент агента `live_canvas_preview` при нарушениях политик путей (`ERR_PATH_OUTSIDE_ROOTS` или несуществующий файл) возвращает структурированный ответ об отказе с полями `code`, `allowedRoots`, `reason` и `valid: false`. Это позволяет языковым моделям понимать границы разрешённого доступа и автоматически корректировать свои вызовы без необработанных исключений.
+
+## 13. Модульная архитектура инструментов, лимиты размеров файлов и браузерный контракт (v0.2.15, Refs: #113, #115)
+- **Декомпозиция `lib/tools.js` на доменные модули (`lib/tool_defs/`)**:
+  - Ранее монолитный файл `lib/tools.js` (2174 строки) полностью декомпозирован на независимые модули по функциональным доменам:
+    - `lib/tool_defs/shared.js` (39 строк): общесистемные хелперы схем `Schema` и декларатор инструментов `defineTool`.
+    - `lib/tool_defs/preview_tools.js` (548 строк): инструменты предпросмотра, инспекции и жизненного цикла (`live_canvas_preview`, `live_canvas_inspect`, `live_canvas_reload`, `live_canvas_diagnose`, `live_canvas_export`, `live_canvas_annotations`).
+    - `lib/tool_defs/workspace_tools.js` (495 строк): инструменты файловой рабочей области и моков (`live_canvas_watch`, `live_canvas_controls`, `live_canvas_diff`, `live_canvas_matrix`, `live_canvas_mock`, `live_canvas_pack`).
+    - `lib/tool_defs/design_tools.js` (513 строк): дизайн-системы, визуальный аудит, Storybook и галерея (`live_canvas_gallery`, `live_canvas_refine_element`, `live_canvas_storybook`, `live_canvas_insert_block`, `live_canvas_vision_import`, `live_canvas_visual_audit`, `live_canvas_generate_mock`, `live_canvas_share`).
+    - `lib/tool_defs/generator_tools.js` (311 строк): генераторы артефактов и каркасов (`live_canvas_create_wireframe`, `live_canvas_create_plan`, `live_canvas_create_diagram`, `live_canvas_create_prototype`, `live_canvas_resolve_annotation`, `live_canvas_create_crud`).
+    - `lib/tool_defs/studio_tools.js` (327 строк): инструменты медиа и студии (`live_canvas_timetravel`, `live_canvas_instant_deploy`, `live_canvas_figma_bridge`, `live_canvas_sound_fx`, `live_canvas_capture_snapshot`).
+    - `lib/tools.js` (42 строки): чистый входной фасад и диспетчер регистрации `registerLiveCanvasTools`.
+  - Все серверные модули инструментов строго удовлетворяют лимиту **< 600 строк**.
+- **Архитектурный контракт браузерного бандла (`lib/client.js`)**:
+  - Файл `lib/client.js` является объявленной клиентской точкой входа плагина (`"dsh": { "client": "lib/client.js" }` в `package.json`).
+  - В среде DeepSeek Harness браузерный модуль загружается через динамический рантайм `window.__ModuleLoader__.load()` в единый контекст страницы без наличия in-browser бандлера (webpack/vite/rollup) на стороне пользователя. Разделение `client.js` на несколько ESM-файлов нарушает совместимость с нативным загрузчиком DSH и приведёт к сбою загрузки интерфейса.
+  - По этой причине `lib/client.js` сохраняется как единый самодостаточный модуль клиентского рантайма (UI-слоты, настройки, интеграция с BetterSidebar, postMessage-мост и ErrorBoundary).
+- **Политика полной обработки исключений (Zero Empty Catches, Refs: #115)**:
+  - В проекте полностью устранены необработанные пустые блоки `catch {}` (45 локаций).
+  - На всех критических путях (файловые операции, сериализация хранилища, парсинг) добавлено структурированное логирование `console.warn` / `console.error`.
+  - Для ожидаемых и безопасных некритических сценариев (проверка аудио-контекста без жеста пользователя, переполнение квоты localStorage, кросс-доменные postMessage) блоки `catch` снабжены явными аннотациями намерений на английском языке (`/* ignoreOptionalFailure: ... */`, `/* bestEffort: ... */`), исключающими скрытое подавление сбоев.
+
