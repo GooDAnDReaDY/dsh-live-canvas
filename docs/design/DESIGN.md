@@ -132,3 +132,18 @@
 - Достигнут 100% паритет ключей между en и zh (75+ ключей интерфейса).
 - Принцип нулевого кириллического текста в lib/ контролируется автоматическим юнит-тестом test/features_and_locale_audit.test.mjs.
 - Русская локализация плагина вынесена в специализированный языковой пакет @goodandready/dsh-russian-lang (зарегистрировано Issue #188).
+
+## 11. Security Architecture & Unified Path Policy (v0.2.12, Refs: #107, #108, #116)
+- **Origin & Network Security (`lib/security.js`)**:
+  - Все мутирующие HTTP эндпоинты (`/api/open-file`, `/api/save-content`, `/api/save-reorder`, `/api/dsh-live-canvas/update`) валидируются через `isTrustedRequest` / `isTrustedUpdateRequest`.
+  - Блокируются кросс-доменные запросы (`sec-fetch-site: cross-site`), проверяется совпадение Host/Origin и loopback/LAN IP.
+  - Запрещен открытый CORS wildcard (`Access-Control-Allow-Origin: *`).
+- **Единая политика путей (`resolveSafePath`)**:
+  - Поддержка нескольких корней через `workspaceRoots: string[]` в настройках плагина и конфигурации DSH.
+  - Защита от path traversal (`..`), символических ссылок (`fs.realpathSync` валидация) и выхода за границы разрешенных директорий.
+  - Агентские инструменты (`live_canvas_preview`, `live_canvas_pack`, `live_canvas_export`) и HTTP роуты работают по единому контракту безопасности.
+  - При ошибке доступа клиент отображает структурированный баннер с указанием пути, кода ошибки и подсказкой по настройке `workspaceRoots`.
+- **One-Click Updater (`lib/updater.js`)**:
+  - Стандартный эндпоинт `/api/dsh-live-canvas/update` с поддержкой проверки версий (`check`) и обновления через DSH CLI.
+  - Корректная поддержка semver пререлизов (alpha/beta).
+  - Интерактивный UI блок в `PluginCard` в настройках плагина.
