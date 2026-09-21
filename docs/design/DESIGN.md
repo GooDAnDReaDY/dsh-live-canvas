@@ -10,6 +10,7 @@
   - Карточка настроек в слоте `settings.plugin.item` (`key: '@goodandready/dsh-live-canvas'`, `locale: '@goodandready/dsh-live-canvas'`), плюс страница плагина `plugins.item` и строка `plugins.row.config`.
   - Страница плагина рисует одну и ту же запись дважды: `view: summary` — одна строка описания под заголовком, `view: page` — форма. Summary не ждёт снимок настроек.
   - Клиентский модуль внедряет `settingsScope` вместе с `slots` и `locale`. Чтение сервиса без inject не роняет карточку: форма показывает `unavailable`.
+  - Пространство имён настроек — `dsh-live-canvas`. Имя пакета сервис настроек отклоняет.
   - Управление: default viewport (`responsive`, `mobile`, `tablet`, `desktop`, `matrix`), auto-open canvas upon HTML generation, enable hot-reload (SSE), max session cache limit.
   - Статусы: `loading`, `unavailable`, `ready`, сообщение об успешном сохранении / ошибке.
 - **Live Canvas Workspace**:
