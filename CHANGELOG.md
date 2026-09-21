@@ -2,6 +2,14 @@
 
 Notable changes to `@goodandready/dsh-live-canvas`.
 
+## 0.2.19
+
+### Fixed
+- **Settings form can open.** The host registered the package name as the
+  settings namespace. That name contains `@` and `/`, and the settings service
+  only accepts a lowercase hyphenated identifier, so the form stayed on
+  "unavailable". The namespace is now `dsh-live-canvas` on both sides.
+
 ## 0.2.18
 
 ### Fixed

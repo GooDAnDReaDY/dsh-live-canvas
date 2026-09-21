@@ -32,4 +32,8 @@ test('client injects settingsScope and summary view does not wait on the snapsho
   const summaryAt = code.indexOf("props.view === 'summary'");
   const loadingAt = code.indexOf("snapshot.status === 'loading'");
   assert.ok(summaryAt > 0 && loadingAt > summaryAt, 'summary view must return before the loading snapshot branch');
+  assert.ok(code.includes("const NS = 'dsh-live-canvas'"), 'settings namespace must be a lowercase hyphenated id');
+  const host = fs.readFileSync(path.resolve('lib/index.js'), 'utf8');
+  assert.ok(host.includes("settings.register('dsh-live-canvas'"), 'host must register the same settings namespace');
+  assert.equal(host.includes('settings.register(name'), false);
 });
