@@ -2,6 +2,24 @@
 
 Notable changes to `@goodandready/dsh-live-canvas`.
 
+## 0.2.19
+
+### Fixed
+- **Settings form can open.** The host registered the package name as the
+  settings namespace. That name contains `@` and `/`, and the settings service
+  only accepts a lowercase hyphenated identifier, so the form stayed on
+  "unavailable". The namespace is now `dsh-live-canvas` on both sides.
+
+## 0.2.18
+
+### Fixed
+- **Plugin page opens instead of showing a component error.** The settings card
+  read the settings service before the client declared it, and the Plugins page
+  mounts that card twice: once as the one-line description and once as the form.
+  Both copies crashed. The client now declares the settings service. The
+  description stays a single line under the title, and the form shows a loading
+  or unavailable state when the service is not ready.
+
 ## 0.2.17
 
 ### Fixed

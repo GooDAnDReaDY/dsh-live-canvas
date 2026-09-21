@@ -228,6 +228,8 @@ dsh plugin --profile web add @goodandready/dsh-live-canvas
 
 ---
 
+The same values are edited on the **Live Canvas Preview** page under Plugins. The page shows one description line under the title and the settings form below it. Save writes each field through the plugin settings service. While that service is loading, the form shows a loading state. When the service is not available, the form shows an unavailable state instead of an error page. The settings namespace is `dsh-live-canvas`; the package name is not a valid settings identifier.
+
 ## ⚙️ Configuration (`settings.yaml`)
 
 ```yaml

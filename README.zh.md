@@ -171,6 +171,8 @@ dsh plugin --profile web add @goodandready/dsh-live-canvas
 
 ---
 
+这些值在插件页的 **Live Canvas Preview** 中编辑。标题下方是一行说明，下面是设置表单。保存时，每个字段都通过插件的设置服务写入。服务仍在加载时，表单显示加载状态；服务不可用时，表单显示不可用状态，而不是错误页。设置命名空间是 `dsh-live-canvas`；包名不是合法的设置标识符。
+
 ## ⚙️ 完整配置说明 (`settings.yaml`)
 
 ```yaml
