@@ -24,3 +24,12 @@ test('client.js PluginCard handles loading status and collects save errors (Issu
   assert.ok(code.includes("errors.push("), 'handleSave must collect all field errors');
 });
 
+test('client injects settingsScope and summary view does not wait on the snapshot (Issue #135)', () => {
+  const clientPath = path.resolve('lib/client.js');
+  const code = fs.readFileSync(clientPath, 'utf8');
+  assert.ok(code.includes("module.exports.inject = ['slots', 'locale', 'settingsScope']"), 'client inject must include settingsScope');
+  assert.ok(code.includes('function readSettingsScope'), 'settings access must be guarded');
+  const summaryAt = code.indexOf("props.view === 'summary'");
+  const loadingAt = code.indexOf("snapshot.status === 'loading'");
+  assert.ok(summaryAt > 0 && loadingAt > summaryAt, 'summary view must return before the loading snapshot branch');
+});

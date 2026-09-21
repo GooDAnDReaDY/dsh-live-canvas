@@ -7,7 +7,9 @@
 
 ## 2. User Surfaces
 - **DSH Settings**:
-  - Карточка настроек в слоте `settings.plugin.item` (`key: '@goodandready/dsh-live-canvas'`, `locale: '@goodandready/dsh-live-canvas'`).
+  - Карточка настроек в слоте `settings.plugin.item` (`key: '@goodandready/dsh-live-canvas'`, `locale: '@goodandready/dsh-live-canvas'`), плюс страница плагина `plugins.item` и строка `plugins.row.config`.
+  - Страница плагина рисует одну и ту же запись дважды: `view: summary` — одна строка описания под заголовком, `view: page` — форма. Summary не ждёт снимок настроек.
+  - Клиентский модуль внедряет `settingsScope` вместе с `slots` и `locale`. Чтение сервиса без inject не роняет карточку: форма показывает `unavailable`.
   - Управление: default viewport (`responsive`, `mobile`, `tablet`, `desktop`, `matrix`), auto-open canvas upon HTML generation, enable hot-reload (SSE), max session cache limit.
   - Статусы: `loading`, `unavailable`, `ready`, сообщение об успешном сохранении / ошибке.
 - **Live Canvas Workspace**:
@@ -107,6 +109,7 @@
   - Не загромождать тулбар лишними декоративными элементами: тулбар должен быть компактным и функциональным.
 
 ## 8. Locked Design Decisions
+- `2026-09-21`: Страница Plugins для Live Canvas — summary одной строкой и форма отдельным `view: page`; клиент обязан внедрять `settingsScope`. Причина: ядро рендерит запись дважды, а чтение сервиса без inject роняет обе копии (issue #135). Пересмотр — если ядро перестанет запрашивать два view.
 - `2026-09-10`: Полный переход на дизайн-систему `dsh-clinebot` с удалением всех хардкодных цветов тёмной темы. Причина: совместимость со светлой темой DSH и визуальное единообразие с экосистемой плагинов Good & Ready. Пересмотр возможен только при глобальном обновлении дизайн-системы самого ядра DSH.
 
 ## 9. In-Canvas DevTools & Diagnostic Architecture
