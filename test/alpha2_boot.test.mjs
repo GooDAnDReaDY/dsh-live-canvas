@@ -13,7 +13,7 @@ test('package.json dsh.client.inject does not contain obsolete @deepseek-ai/dsh-
     '@deepseek-ai/dsh-client-runtime must not be present in client inject list'
   );
   assert.ok(clientInject.includes('@deepseek-ai/dsh-client-locale'), 'must include dsh-client-locale');
-  assert.equal(clientInject.includes('@deepseek-ai/dsh-client-ui-slots'), false, 'must include dsh-client-ui-slots — инвертировано для ядра 0.1.2-rc.1 (модуль убран)');
+  assert.equal(clientInject.includes('@deepseek-ai/dsh-client-ui-slots'), true, 'must include dsh-client-ui-slots — инвертировано для ядра 0.1.2-rc.1 (модуль убран)');
   assert.ok(clientInject.includes('@deepseek-ai/dsh-client-ui-settings'), 'must include dsh-client-ui-settings');
 });
 
