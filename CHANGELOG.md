@@ -2,6 +2,11 @@
 
 Notable changes to `@goodandready/dsh-live-canvas`.
 
+## 0.2.20
+
+### Fixed
+- Settings no longer wait on the removed settingsScope service. The client uses configForms (#135).
+
 ## 0.2.19
 
 ### Fixed
