@@ -7,6 +7,4 @@ credentials.yaml
 .worktrees/
 *.log
 *.tgz
-AGENTS.md
-index.md
 docs/plans/
