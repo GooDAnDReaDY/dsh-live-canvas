@@ -2,6 +2,17 @@
 
 Notable changes to `@goodandready/dsh-live-canvas`.
 
+## 0.2.21
+
+### Added
+- **LRU In-Memory Compilation Caching in `transpiler.js`**: `transpileAndWrap` caches up to 50 compiled documents using a composite key (`id`, `updatedAt`, `theme`, `componentType`, content signature), delivering O(1) instantaneous responses during multi-device matrix rendering (`/matrix`), tab switching, and SSE reloads (#131).
+- **HTTP 405 Method Not Allowed Handling**: Declarative `API_ROUTE_METHODS` map for all 25 canvas API endpoints returning canonical HTTP 405 with `Allow` headers when routes are requested with unsupported HTTP verbs (#132).
+- **Workspace File Listing Cache in `watcher.js`**: Short-lived 3000ms TTL cache for `listWorkspaceFiles` with automated invalidation on `fs.watch` events, eliminating synchronous directory scan spikes during file picker drawer toggling (#134).
+- **Internal DEV Contract Documentation**: Added `AGENTS.md`, `index.md`, and executable `deploy.sh` verification and deployment script; strictly excluded from npm and mirror distributions (#137).
+
+### Fixed
+- **UI Design System Color Conformance**: Replaced 4 hardcoded hex colors (`#ffffff` and `#fff`) in `client.js` with semantic DSH design token `var(--dsw-alias-text-contrast)` (#133).
+
 ## 0.2.20
 
 ### Fixed
