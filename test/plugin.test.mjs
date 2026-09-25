@@ -49,9 +49,9 @@ test('Plugin lifecycle applies routes and handles sandbox, API, diff, matrix, mo
       if (deps.includes('settings')) {
         cb({
           settings: {
-            register: (ns, cfg, opts) => {
-              registeredSettings = { ns, cfg, opts };
-              return { get: () => opts.base, set: () => {} };
+            configure: (opts) => {
+              registeredSettings = { opts };
+              return () => {};
             }
           }
         });
@@ -88,7 +88,8 @@ test('Plugin lifecycle applies routes and handles sandbox, API, diff, matrix, mo
     maxSessionCache: 50
   });
 
-  assert.equal(registeredSettings.ns, 'dsh-live-canvas');
+  assert.ok(registeredSettings, 'settings policy must be configured (#142)');
+  assert.deepEqual(registeredSettings.opts, { auto: false });
   assert.ok(tools.length >= 13); // preview, inspect, reload, diagnose, export, annotations, gallery, watch, controls, diff, matrix, mock, pack
   assert.ok(routes.length >= 5); // events, sandbox, diff, matrix, api
 
