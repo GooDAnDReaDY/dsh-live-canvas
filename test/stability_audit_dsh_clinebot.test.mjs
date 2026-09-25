@@ -49,12 +49,18 @@ test('lib/tools.js registers all 31 tools and handles null args without throwing
 
   for (const tool of registeredTools) {
     assert.equal(typeof tool.execute, 'function', `Tool ${tool.name} must have execute function`);
-    // Test execution with null - must NOT throw TypeError
+    // Contract: non-object arguments throw standard DSH tools validation error (#147)
+    await assert.rejects(
+      async () => tool.execute(null),
+      /invalid arguments/i,
+      `Tool ${tool.name} must reject invalid non-object argument according to DSH tools contract`
+    );
+    // When called with empty object (null/empty model parameters), execution completes safely
     try {
-      const res = await tool.execute(null);
-      assert.ok(res !== undefined, `Tool ${tool.name} executed cleanly with null`);
+      const res = await tool.execute({});
+      assert.ok(res !== undefined, `Tool ${tool.name} executed cleanly with {}`);
     } catch (err) {
-      assert.fail(`Tool ${tool.name} threw uncaught error on null: ${err.message}`);
+      assert.fail(`Tool ${tool.name} threw uncaught error on {}: ${err.message}`);
     }
   }
 });
