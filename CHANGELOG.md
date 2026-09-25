@@ -2,6 +2,18 @@
 
 Notable changes to `@goodandready/dsh-live-canvas`.
 
+## 0.2.22
+
+### Added
+- **DSH 0.1.7 Settings Policy Configuration**: Host half now uses `settings.configure({ auto: false }, ctx.fiber)` managed under `ctx.effect` with cleanup disposer, eliminating calls to removed `settings.register` (#142).
+- **Canonical Updater Routes and Aliases**: Client card now targets canonical `/api/dsh-live-canvas/update`, while the host registers both `/api/dsh-live-canvas/update` and `/dsh-live-canvas/api/update` alias in router and `API_ROUTE_METHODS` for seamless compatibility (#144).
+- **Reactive Settings Snapshot Subscription**: Client settings card subscribes to `configForms` scope invalidations via `scope.subscribe` and `React.useSyncExternalStore` (#146).
+
+### Fixed
+- **POST Route Body Parsers & JSON Error Handling**: Unified `parseBody` with full `new Promise((resolve, reject))` error rejection, defined `readJsonBody` alias, and eliminated `ReferenceError` on `save-reorder` and `annotations/resolve` routes (#143).
+- **Locale Registration Effect Ownership**: Client i18n dictionaries are registered under `ctx.effect('dsh-live-canvas: locale')` with cleanup disposer, preventing duplicate collisions during HMR and repeat apply (#145).
+- **Tool Stability Test Contract Alignment**: Adjusted `stability_audit_dsh_clinebot.test.mjs` to test invalid model arguments against `@deepseek-ai/dsh-tools` validation contracts without bypassing runtime schemas (#147).
+
 ## 0.2.21
 
 ### Added
