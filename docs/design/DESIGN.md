@@ -239,3 +239,24 @@
   - При внешнем изменении настроек на сервере или в соседней вкладке снимок (`snapshot`) и форма ввода (`draft`) автоматически синхронизируются с актуальными значениями без необходимости перезагрузки страницы.
 - **Соответствие тестов контракту валидатора dsh-tools (Refs: #147)**:
   - Тест `test/stability_audit_dsh_clinebot.test.mjs` скорректирован в строгом соответствии с контрактом `@deepseek-ai/dsh-tools`: проверка вызова с `null` ассертит стандартное отклонение валидатором рантайма (`invalid arguments: "arguments" must be an object`), а проверка устойчивости к пустым параметрам выполняется с валидным объектом `{}`.
+
+- **Безопасность источников, изоляция браузера и целостность файлов (Block 1 Audit, Refs: #164, #165, #166, #176, #177, #195)**:
+  - **Защита границ workspaceRoots (#164)**:
+    - В `PreviewStore` добавлен обязательный контроль `workspaceRoots` и метод `isPathAllowed(path)`. Сессии с `filePath` за пределами разрешенных корней не привязываются и отбрасываются при загрузке с диска.
+    - В `lib/tool_defs/preview_tools.js` инструмент `live_canvas_preview` проверяет `filePath` через `resolveSafePath` независимо от наличия поля `content`, предотвращая утечку путей и чтение файлов вне workspace.
+    - В `lib/transpiler.js` функция `bundleMultiFileReact` проверяет относительные импорты против `allowedRoots`: модули, выходящие за пределы корней, отбрасываются и не встраиваются в бандл.
+    - Эндпоинт `POST /dsh-live-canvas/api/preview` валидирует `body.filePath` через `resolveSafePath`, возвращая канонический HTTP 403 Forbidden с кодом `ERR_PATH_OUTSIDE_ROOTS` при попытке обхода.
+  - **Изоляция браузерных фреймов и устранение Same-Origin эскалации (#165)**:
+    - Из всех iframe в `lib/client.js` и шаблонов оберток (`buildDiffWrapper`, `buildMatrixWrapper`, `buildGalleryWrapper` в `lib/transpiler.js`) полностью удален атрибут `allow-same-origin`. Песочница переведена на строгий изолированный opaque origin (`sandbox="allow-scripts allow-forms allow-modals"`).
+    - Прямое междоменное обращение к `frame.contentWindow.__DLC_SOUND__` заменено на асинхронный `postMessage({ type: 'dlc_play_sound', sound })` с обработчиком в `lib/sandbox.js`.
+    - Обработчики сообщений окна (`handleMsg`, `handleWindowMessage`) валидируют источник события `ev.source === frameRef.current?.contentWindow`, предотвращая отправку поддельных команд сторонними окнами.
+  - **Защита исходного кода от перезаписи DOM HTML при визуальном изменении порядка (#166)**:
+    - Эндпоинт `POST /dsh-live-canvas/api/save-reorder` строго запрещает перезапись не-HTML файлов (`.jsx`, `.tsx`, `.vue`, `.js`, `.ts`), возвращая HTTP 400 Bad Request с информативным сообщением об ошибке, гарантируя сохранность декларативных React/Vue компонентов.
+    - Для `.html` файлов заменяется исключительно внутреннее содержимое тега `<body>`, сохраняя `<!DOCTYPE>`, `<head>`, мета-теги и стили исходного документа.
+  - **Канонический путь хранения данных через DSH_HOME (#176, #177)**:
+    - Экспортирована функция `resolveDshHome()`, гарантирующая приоритет переменной окружения `process.env.DSH_HOME` перед `~/.dsh`.
+    - Директория персистентности сессий вынесена в `path.join(resolveDshHome(), 'data', 'dsh-live-canvas')`.
+    - Тесты (`test/plugin.test.mjs`, `test/block1_safety_and_isolation.test.mjs`) изолируют `process.env.DSH_HOME` во временных директориях, предотвращая загрязнение реального каталога пользователя.
+  - **Безопасная обработка событий в Projects Hub (#195)**:
+    - В витрине проектов (`Projects Hub`) устранены инлайн-обработчики событий `onclick="openSession(...)"`, `onclick="openFile(...)"`, `onclick="loadDemo(...)"`.
+    - Данные передаются через безопасные атрибуты `data-session-id`, `data-file-path`, `data-demo` с единым делегированным обработчиком `addEventListener("click", ...)`.

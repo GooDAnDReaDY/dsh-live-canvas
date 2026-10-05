@@ -1,4 +1,7 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 import { test } from 'node:test';
 import { EventEmitter } from 'node:events';
 import { name, inject, apply, Config } from '../lib/index.js';
@@ -39,6 +42,9 @@ test('Plugin exports correct metadata and schema', () => {
 });
 
 test('Plugin lifecycle applies routes and handles sandbox, API, diff, matrix, mock, pack, and export endpoints', async () => {
+  const originalDshHome = process.env.DSH_HOME;
+  const testDshHome = fs.mkdtempSync(path.join(os.tmpdir(), 'dsh-test-plugin-home-'));
+  process.env.DSH_HOME = testDshHome;
   const routes = [];
   const tools = [];
   let registeredSettings = null;
@@ -122,4 +128,6 @@ test('Plugin lifecycle applies routes and handles sandbox, API, diff, matrix, mo
   for (const cleanup of effects) {
     if (typeof cleanup === 'function') cleanup();
   }
+  if (originalDshHome === undefined) delete process.env.DSH_HOME; else process.env.DSH_HOME = originalDshHome;
+  try { fs.rmSync(testDshHome, { recursive: true, force: true }); } catch {}
 });
