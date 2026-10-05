@@ -2,6 +2,25 @@
 
 Notable changes to `@goodandready/dsh-live-canvas`.
 
+## 0.2.23
+
+### Added
+- **Dedicated Time-Travel Route**: Registered standalone timeline viewer endpoint `/dsh-live-canvas/timetravel/:id` on webServer and API router with automatic unregister disposer (#153).
+- **WorkspaceWatcher Agent Tool Injection**: Forwarded live watcher instance into `registerLiveCanvasTools` for direct operational control via `live_canvas_watch` (#172).
+- **Flexible PreviewStore Compatibility Layer**: Added `addInspection`, `addLog`, `addAnnotation`, `setControlValues`, `getControls`, `getControlValues`, `createSession`, `getInspections` aliases supporting both multi-argument and unified record formats (#154).
+- **Universal Export Endpoint**: Supported `GET /dsh-live-canvas/api/export?canvasId=...` alongside path-based `/api/export/:id`, and updated chat cards to link directly to export (#188).
+
+### Fixed
+- **Sandbox Browser Runtime Syntax & Reorder**: Removed duplicate `origLog` declaration and duplicate telemetry block; bound reorder POST handler to declared `SAVE_REORDER_API` constant (#163, #170).
+- **Cordis Configuration Volatile Wrapping**: Implemented `.volatile()` polyfill on `Schema.prototype` and marked all plugin settings as volatile to avoid unwanted persistence of dynamic config (#149).
+- **REST API Route URL Parsing**: Declared `urlObj`, `url`, and `urlPath` in API handler, resolving `ReferenceError: url is not defined` on standalone export route (#152).
+- **Design Tools Safety**: Imported `fs` and `resolveSafePath` into design tools, fixing unhandled reference errors in `live_canvas_refine_element` and `live_canvas_insert_block` (#155).
+- **Agent Tool Standalone HTML Export**: Imported `buildStandaloneHtml` into `preview_tools.js` for `live_canvas_export` (#171).
+- **Nullable Schemas for DSH Agent Tools**: Converted `inspected`, `lastAnnotation`, and `writtenDir` output schemas to `oneOf: [{ type: '...' }, { type: 'null' }]` for strict validator compliance (#173).
+- **Transpiler Cache Key & Timestamp Invalidation**: Switched cache key generation to SHA-256 digest covering full source code, custom CSS, custom JS, variants, and workspace dir, and refreshed session timestamp when disk files change (#174).
+- **Client Active Session Resolution**: Removed synthetic `file_*` identifier creation, falling back cleanly to real session IDs or the hub (#187).
+- **Security, Frame Isolation & Workspace Roots (Block 1)**: Enforced strict root boundaries (#164), removed `allow-same-origin` from sandboxed iframes (#165), protected non-HTML files from visual reorder overwrite (#166), canonicalized `DSH_HOME` data persistence (#176, #177), and secured Projects Hub click handlers (#195).
+
 ## 0.2.22
 
 ### Added
