@@ -260,3 +260,39 @@
   - **Безопасная обработка событий в Projects Hub (#195)**:
     - В витрине проектов (`Projects Hub`) устранены инлайн-обработчики событий `onclick="openSession(...)"`, `onclick="openFile(...)"`, `onclick="loadDemo(...)"`.
     - Данные передаются через безопасные атрибуты `data-session-id`, `data-file-path`, `data-demo` с единым делегированным обработчиком `addEventListener("click", ...)`.
+- **Восстановление рантайма, контрактов инструментов и API (Block 2 Audit, Refs: #163, #149, #152, #153, #154, #155, #169, #170, #171, #172, #173, #174, #187, #188)**:
+  - **Устранение синтаксических и runtime-ошибок скрипта песочницы (#163, #170)**:
+    - Из шаблона инжекции `injectSandboxRuntime` в `lib/sandbox.js` удалены дублирующееся объявление `const origLog` и задвоенный блок телеметрии.
+    - Отправка логов консоли консолидирована в функцию `postConsoleMsg`, одновременно отправляющую событие в родительское окно (`postMessage`) и на серверный эндпоинт телеметрии.
+    - Внутри IIFE браузерного скрипта объявлена константа `SAVE_REORDER_API = ${JSON.stringify(saveReorderApiUrl)}`, а нелокальная ссылка `saveReorderApiUrl` заменена на `SAVE_REORDER_API`, исключая `ReferenceError` при визуальном переупорядочивании элементов.
+  - **Конфигурационная схема Cordis и поддержка .volatile() (#149)**:
+    - На прототип `Schema` добавлен полифил метода `.volatile()` (по аналогии со стандартом DSH в `dsh-clinebot`).
+    - Все 7 настраиваемых свойств в `Config` (`defaultViewport`, `autoOpenOnHtmlGen`, `enableHotReload`, `maxSessionCache`, `enableFileWatcher`, `workspaceDir`, `workspaceRoots`) помечены как `.volatile()`.
+  - **Корректный парсинг URL в REST API обработчике (#152)**:
+    - В обработчике `unregApi` объявлен `urlObj = new URL(req.url, 'http://localhost')`, а также алиасы `url` и `urlPath = urlObj.pathname`.
+    - Устранен `ReferenceError: url is not defined` при обращении к эндпоинту `GET /dsh-live-canvas/api/standalone?canvasId=...`.
+  - **Восстановление недостающих импортов и эндпоинтов (#153)**:
+    - В `lib/index.js` импортированы `buildTimeTravelViewer` из `./timetravel.js`, `buildDeploymentBundle` из `./deploy.js` и `SOUND_PRESETS` из `./sound.js`.
+    - Зарегистрирован отдельный префиксный маршрут `wctx.webServer.register({ path: '/dsh-live-canvas/timetravel', ... })` с автоматической отпиской при остановке плагина.
+    - В `unregApi` и `getAllowedMethodsForApiPath` добавлен маршрут `/dsh-live-canvas/api/timetravel/:id`.
+  - **Совместимость методов хранилища PreviewStore (#154)**:
+    - В `PreviewStore` реализованы методы-алиасы `addInspection`, `addLog`, `addAnnotation`, `setControlValues`, `getControls`, `getControlValues`, `createSession`, `getInspections` с гибким приемом аргументов (как раздельных `(canvasId, data)`, так и единого объекта).
+  - **Безопасность файловых операций в дизайн-инструментах (#155)**:
+    - В `lib/tool_defs/design_tools.js` импортированы модуль `fs` из `'node:fs'` и утилита `resolveSafePath` из `'../sandbox.js'`, что устранило `ReferenceError` в инструментах `live_canvas_refine_element` и `live_canvas_insert_block`.
+  - **Маршрут аннотаций и дефолтный URL клиента (#169)**:
+    - В `API_ROUTE_METHODS` и роутер `lib/index.js` добавлен POST-обработчик для `/dsh-live-canvas/api/annotations` как алиас к `/dsh-live-canvas/api/annotate`.
+    - В `lib/sandbox.js` дефолтный адрес `annotateApiUrl` приведен к `/dsh-live-canvas/api/annotate`.
+  - **Экспорт автономного HTML в инструментах агента (#171)**:
+    - В `lib/tool_defs/preview_tools.js` импортирована функция `buildStandaloneHtml` из `'../transpiler.js'`, устраняя падение инструмента `live_canvas_export`.
+  - **Проброс сервиса WorkspaceWatcher в инструменты (#172)**:
+    - В `lib/index.js` экземпляр `watcher` явно передан в `registerLiveCanvasTools(ctx, store, eventHub, { ..., watcher })`, благодаря чему инструмент `live_canvas_watch` имеет прямой доступ к активному наблюдателю файлов.
+  - **Совместимость схем результатов инструментов со спецификацией dsh-tools (#173)**:
+    - Поля `inspected` (`live_canvas_inspect`), `lastAnnotation` (`live_canvas_annotations`) и `writtenDir` (`live_canvas_pack`) переведены со сбоящих `nullable: true` / `type: ['object', 'null']` на валидную конструкцию `oneOf: [{ type: '...' }, { type: 'null' }]`.
+  - **Инвалидация кэша транспиляции и обновление метки времени (#174)**:
+    - Функция `getSessionCacheKey` в `lib/transpiler.js` переведена на вычисление SHA-256 хэша полного исходного текста, `customCss`, `customJs`, `variants` и рабочей директории, устраняя коллизии при изменениях в середине файлов без изменения длины строки.
+    - В `store.getSession(id)` добавлено автоматическое обновление `session.updatedAt = new Date().toISOString()` при перезагрузке измененного файла с диска.
+  - **Корректный выбор активной сессии на клиенте (#187)**:
+    - В `lib/client.js` удалена генерация синтетических ID вида `file_*`. Значение `activeId` разрешается через `canvasId || (sessions[0] && sessions[0].id) || 'hub'`, гарантируя совпадение с реальными сессиями хранилища.
+  - **Универсальный экспорт и ссылки в карточке чата (#188)**:
+    - Эндпоинт экспорта расширен для поддержки как `/dsh-live-canvas/api/export/<id>`, так и `/dsh-live-canvas/api/export?canvasId=<id>`.
+    - В карточке чата кнопка экспорта направляет пользователя на `/dsh-live-canvas/api/export/${data.canvasId}`.
