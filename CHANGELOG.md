@@ -2,6 +2,18 @@
 
 Notable changes to `@goodandready/dsh-live-canvas`.
 
+## 0.2.25
+
+### Added
+- **Split-View Code Editor Drawer**: Implemented collapsible `dlc-code-drawer` panel in client UI with keyboard shortcut <kbd>Ctrl+S</kbd> / <kbd>Cmd+S</kbd>, live code loading from `GET /api/sessions?canvasId=...`, and disk-backed persistence (#186).
+- **Two-Way Tailwind Class Persistence**: Implemented disk-backed element class persistence in `POST /api/save-classes` for both HTML (`class="..."`) and JSX/TSX (`className="..."`), broadcasting both `classes_updated` and `update` SSE events (#168).
+
+### Fixed
+- **Content Saving and Text Insertion API**: Supported `fullContent`, `content`, `appendContent`, and `mode` (`replace`, `insert`, `append`), with strict payload validation (400 on empty, 422 with `{ replaced: false }` if text to replace is not found) and disk synchronization (#167).
+- **Relative Path Session Persistence & Empty File Cache Invalidation**: Allowed relative paths within `workspaceRoots` to survive harness restart in `PreviewStore._loadFromDisk()`. Ensured empty files (`""`) update session state cleanly without leaving stale cached previews (#175).
+- **Canary Content in HTML Snapshots**: Overloaded `buildStandaloneHtml` to accept session objects or strings; ensured `live_canvas_capture_snapshot` passes session metadata and returns full rendered HTML (#180).
+- **Settings Enforcement**: Wired `defaultViewport`, `enableHotReload`, `enableFileWatcher`, and `autoOpenOnHtmlGen` settings into `PreviewStore`, `WorkspaceWatcher`, and client UI (#190).
+
 ## 0.2.24
 
 ### Security & Isolation
