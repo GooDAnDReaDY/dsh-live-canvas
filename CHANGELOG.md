@@ -2,6 +2,21 @@
 
 Notable changes to `@goodandready/dsh-live-canvas`.
 
+## 0.2.24
+
+### Security & Isolation
+- **Eliminated `allow-same-origin` from All Sandboxed Iframes**: Removed the final remaining `allow-same-origin` sandbox directive from `lib/timetravel.js`, achieving zero occurrences across the entire package. All frame interactions (`save_text_edit`, `save_classes`, `save_reorder`, `annotate`, `inspect`) now communicate via a secure `postMessage` bridge with the parent host frame (#198).
+- **Private LAN Mode Support (`dsh-lanmode`) & Fail-Closed Guard**: Added `isPrivateLanAddress` recognizing RFC 1918 private subnets in `isTrustedRequest`, eliminating HTTP 403 Forbidden errors when accessing canvas previews across the local network. Fixed fail-open socket bug when remoteAddress cannot be resolved (#199, #156).
+- **Restricted Internal API Read Routes**: Enforced `isTrustedRequest` on all internal `/dsh-live-canvas/api/*` endpoints (including `GET /api/sessions`, `/api/workspace-files`, `/api/logs`), protecting workspace structure and active sessions from cross-site discovery (#157).
+- **Strict Sandbox CSP & Framing Policy**: Enforced `X-Frame-Options: SAMEORIGIN` and strict CSP headers on preview endpoints (#161).
+
+### Fixed
+- **Safe Substring Replacement for WYSIWYG Saves**: Implemented `safeReplaceSubstring` to prevent regex replacement pattern expansion (`$1`, `$&`, `$'`) from user text, and added `occurrenceIndex` targeting matching DOM elements to avoid corrupting duplicate text (#159, #200).
+- **Accurate Buffer Byte Accounting & Persistence Limits**: Rewrote `parseBody` to check `Content-Length` headers before streaming and measure bytes by `Buffer.byteLength` rather than UTF-16 code units. Enforced a 5 MB per session content limit and 10 MB maximum file size on `sessions.json` (#158, #201).
+- **Unlink on Disk Wipe in PreviewStore**: Fixed `store.clear(wipeDisk = true)` to remove the persistence file using `fs.unlinkSync` instead of saving cleared maps (#160).
+- **Valid npm Package Name Sanitization**: Added `sanitizeNpmPackageName` in `packager.js` prefixing purely numeric names and Node core builtins with `pkg-`, and filtering invalid characters (#162).
+- **Cordis Logger Integration**: Created `lib/logger.js` bound to `ctx.logger('dsh-live-canvas')` and cleaned up direct `console.*` calls across host modules (#150).
+
 ## 0.2.23
 
 ### Added
