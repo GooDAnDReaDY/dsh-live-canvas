@@ -2,6 +2,19 @@
 
 Notable changes to `@goodandready/dsh-live-canvas`.
 
+## 0.2.26
+
+### Added
+- **Vue 3 SFC Preview Support**: Added full support for Vue 3 Single File Components with `<template>` and `<script setup>` syntax, automatic component detection in `autoDetectType`, live runtime compilation via Vue 3 global CDN in `buildVueWrapper`, and officially added `'vue'` to the `componentType` schema enum (#178).
+- **Scannable ISO/IEC 18004 Mobile QR Code**: Replaced placeholder box styling with a pure-JS QR code matrix generator (`createQrMatrix` & `generateSimpleQrSvg`) in `lib/share.js`, encoding the actual canvas URL into a scannable SVG (#181).
+- **W3C Design Tokens DTCG Integration**: Extended `parseDesignTokens` to support W3C DTCG `$value`/`$type` syntax without emitting metadata CSS variables; added `apply_tokens` action in `live_canvas_figma_bridge` and `POST /dsh-live-canvas/api/tokens` HTTP endpoint (#191).
+- **Host Web Audio FX & SSE Sound Playback**: Integrated Web Audio synthesizer into host client (`lib/client.js`), added SSE `sound` event broadcasting to `eventHub` and `live_canvas_sound_fx`, and enabled tactical audio feedback (#185).
+
+### Fixed
+- **Multi-File Bundler Default Import Alias Bug**: Fixed unexpanded literal `$1` emission in `bundleMultiFileReact`; properly aliases default exported functions and classes to imported identifiers (`const Alias = OrigName`), and added local `.json` file inlining and named aliases (`import { orig as alias }`) (#194).
+- **Standalone HTML Bundle React/JSX Execution**: Updated `buildStandaloneHtmlBundle` to compile React components using React 18, Babel runtime, and root mount point instead of dumping uncompiled JSX inside a static div (#179).
+- **Figma Export Artifact Delivery**: Updated `live_canvas_figma_bridge` to return `figmaSvg`, `title`, and `instructions` in the tool output schema and execution response instead of discarding the artifact (#184).
+
 ## 0.2.25
 
 ### Added
