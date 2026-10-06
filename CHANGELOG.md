@@ -2,6 +2,18 @@
 
 Notable changes to `@goodandready/dsh-live-canvas`.
 
+## 0.2.27
+
+### Added
+- **Design System Themes Selector & Dynamic CSS Variables**: Added interactive theme dropdown selector in Studio toolbar populated from `THEME_PRESETS`; updated `GET /dsh-live-canvas/api/themes` with ready-to-use `cssVariables`, and added `dlc_set_theme_preset` message handling in sandbox iframe to dynamically apply theme CSS variables (#193).
+- **Interactive Artifact Templates API**: Added `GET /dsh-live-canvas/api/artifact-template?type=(wireframe|plan|diagram|prototype)` endpoint generating live, interactive HTML artifacts using domain model engines (`wireframe.js`, `plan.js`, `diagram.js`, `prototype.js`) instead of static stubs (#192).
+- **Full Studio Feedback i18n Localization**: Localized all toast feedback notifications in `lib/client.js` with 100% key parity across `en` (161 keys) and `zh` (161 keys) dictionaries, maintaining strictly zero Cyrillic characters in `lib/*.js` (#196).
+
+### Fixed
+- **Vision Import Path Validation & Genuine Visual Reference Layout**: Updated `live_canvas_vision_import` to validate `imagePath` and `imageUrl` fail-closed; if no pre-generated code is supplied, imports a genuine visual reference layout embedding the verified image (`reference_import` mode) rather than fabricating dummy UI layouts (#182).
+- **Visual Audit DOM & Structural Verification**: Refactored `live_canvas_visual_audit` to reject non-existent or empty canvas sessions (fail-closed); performs comprehensive inspections for missing image `alt` tags, empty buttons, unlabelled inputs, and fixed mobile viewport width overflows (`w-[...px]` > 360px), calculating real scores and reporting unverified dynamic runtime criteria (#183).
+- **Studio Populate Mock Integration & Sandbox Interceptor**: Connected the «⚡ Mocks» toolbar button to `POST /dsh-live-canvas/api/mock` to persist datasets to session state, postMessage `dlc_set_mock_data` to sandbox iframe, and dynamically intercept matching fetch requests (#189).
+
 ## 0.2.26
 
 ### Added
