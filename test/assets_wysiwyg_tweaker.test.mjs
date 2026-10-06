@@ -68,6 +68,8 @@ test('Static assets, WYSIWYG save-content, style tweaker, and AI refine tools wo
     return {
       method,
       url,
+      socket: { remoteAddress: '127.0.0.1' },
+      headers: {},
       on: (ev, cb) => {
         if (ev === 'data') cb(Buffer.from(data));
         if (ev === 'end') cb();

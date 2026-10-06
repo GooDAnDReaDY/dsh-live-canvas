@@ -1,3 +1,7 @@
+import { isPrivateLanAddress, safeReplaceSubstring, isTrustedRequest } from '../lib/security.js';
+import { sanitizeNpmPackageName } from '../lib/packager.js';
+import { setLogger, logger } from '../lib/logger.js';
+import { getSandboxHeaders } from '../lib/sandbox.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
@@ -15,6 +19,7 @@ function createMockReqRes(options = {}) {
   req.url = options.url || '/';
   req.method = options.method || 'GET';
   req.headers = options.headers || {};
+  req.socket = options.socket || { remoteAddress: '127.0.0.1' };
 
   const res = new EventEmitter();
   res.headers = {};
@@ -272,4 +277,166 @@ test('Issue #195: Projects Hub uses safe data-attributes instead of inline strin
   for (const c of cleanups) c();
   if (originalDshHome === undefined) delete process.env.DSH_HOME; else process.env.DSH_HOME = originalDshHome;
   try { fs.rmSync(tmpDir, { recursive: true, force: true }); } catch {}
+});
+test('Issue #198: Zero allow-same-origin occurrences in all lib files and client postMessage bridge', () => {
+  const libDir = path.join(process.cwd(), 'lib');
+  const files = fs.readdirSync(libDir, { recursive: true }).filter(f => f.endsWith('.js'));
+  for (const f of files) {
+    const content = fs.readFileSync(path.join(libDir, f), 'utf8');
+    assert.ok(
+      !content.includes('allow-same-origin'),
+      `File lib/${f} must contain zero occurrences of allow-same-origin`
+    );
+  }
+
+  // Client message bridge handlers
+  const clientJs = fs.readFileSync(path.join(libDir, 'client.js'), 'utf8');
+  assert.ok(clientJs.includes("e.data.type === 'dlc_save_text_edit'"), 'client.js must handle dlc_save_text_edit');
+  assert.ok(clientJs.includes("e.data.type === 'dlc_save_classes'"), 'client.js must handle dlc_save_classes');
+  assert.ok(clientJs.includes("e.data.type === 'dlc_save_reorder'"), 'client.js must handle dlc_save_reorder');
+});
+
+test('Issue #199 & #156: isTrustedRequest accepts private LAN IP and strictly rejects absent sockets', () => {
+  // #156: Absent socket must fail-closed
+  assert.equal(isTrustedRequest({}), false, 'Request with no socket/connection must be rejected');
+  assert.equal(isTrustedRequest({ socket: {} }), false, 'Request with empty socket must be rejected');
+  assert.equal(isTrustedRequest({ socket: { remoteAddress: null } }), false, 'Request with null remoteAddress must be rejected');
+
+  // #199: Private LAN IPs
+  assert.equal(isPrivateLanAddress('192.168.1.100'), true);
+  assert.equal(isPrivateLanAddress('10.0.0.5'), true);
+  assert.equal(isPrivateLanAddress('172.20.0.1'), true);
+  assert.equal(isPrivateLanAddress('8.8.8.8'), false);
+
+  const lanReq = {
+    headers: { host: '192.168.1.111:3080', origin: 'http://192.168.1.111:3080' },
+    socket: { remoteAddress: '192.168.1.50' }
+  };
+  assert.equal(isTrustedRequest(lanReq), true, 'Private LAN request with matching host/origin must be trusted');
+
+  const lanCrossSite = {
+    headers: { host: '192.168.1.111:3080', origin: 'http://evil.com', 'sec-fetch-site': 'cross-site' },
+    socket: { remoteAddress: '192.168.1.50' }
+  };
+  assert.equal(isTrustedRequest(lanCrossSite), false, 'Cross-site request from LAN must be rejected');
+});
+
+test('Issue #157: GET routes on /dsh-live-canvas/api/* reject untrusted origins', async () => {
+  const routes = [];
+  const mockCtx = {
+    inject: (deps, cb) => {
+      if (deps.includes('webServer')) {
+        cb({ webServer: { register: (r) => routes.push(r) } });
+      }
+    },
+    tools: { register: () => {} },
+    effect: (fn) => fn()
+  };
+
+  apply(mockCtx, { workspaceRoots: [process.cwd()] });
+  const apiRoute = routes.find(r => r.path === '/dsh-live-canvas/api');
+  assert.ok(apiRoute, 'API route must be registered');
+
+  // Untrusted GET request (cross-site origin)
+  const untrustedGet = createMockReqRes({
+    url: '/dsh-live-canvas/api/sessions',
+    method: 'GET',
+    headers: { origin: 'http://evil.com', 'sec-fetch-site': 'cross-site', host: 'localhost:3000' }
+  });
+  await apiRoute.handler(untrustedGet.req, untrustedGet.res);
+  assert.equal(untrustedGet.res.statusCode, 403, 'Untrusted GET /api/sessions must return 403 Forbidden');
+});
+
+test('Issue #159 & #200: safeReplaceSubstring avoids $ pattern expansion and handles duplicate text', () => {
+  // #159: No pattern expansion
+  const source = 'const price = "OLD_PRICE";';
+  const replaced = safeReplaceSubstring(source, 'OLD_PRICE', '$100 & $&');
+  assert.equal(replaced, 'const price = "$100 & $&";', 'Must not expand $1 or $& patterns');
+
+  // #200: Duplicate text handling via occurrenceIndex
+  const htmlDoc = '<div>Button</div><p>Description</p><div>Button</div>';
+  const replacedFirst = safeReplaceSubstring(htmlDoc, 'Button', 'Save', { occurrenceIndex: 0 });
+  assert.equal(replacedFirst, '<div>Save</div><p>Description</p><div>Button</div>', 'Must replace only the first occurrence');
+
+  const replacedSecond = safeReplaceSubstring(htmlDoc, 'Button', 'Cancel', { occurrenceIndex: 1 });
+  assert.equal(replacedSecond, '<div>Button</div><p>Description</p><div>Cancel</div>', 'Must replace only the second occurrence');
+
+  // replaceAll option
+  const replacedAll = safeReplaceSubstring(htmlDoc, 'Button', 'Action', { replaceAll: true });
+  assert.equal(replacedAll, '<div>Action</div><p>Description</p><div>Action</div>', 'Must replace all occurrences when replaceAll=true');
+});
+
+test('Issue #158 & #201: parseBody rejects Content-Length overflow and store limits size', async () => {
+  const routes = [];
+  const mockCtx = {
+    inject: (deps, cb) => {
+      if (deps.includes('webServer')) {
+        cb({ webServer: { register: (r) => routes.push(r) } });
+      }
+    },
+    tools: { register: () => {} },
+    effect: (fn) => fn()
+  };
+  apply(mockCtx, { workspaceRoots: [process.cwd()] });
+  const apiRoute = routes.find(r => r.path === '/dsh-live-canvas/api');
+
+  // #158: Content-Length header exceeding limit rejects immediately
+  const reqOverflow = createMockReqRes({
+    url: '/dsh-live-canvas/api/preview',
+    method: 'POST',
+    headers: { 'content-length': String(30 * 1024 * 1024) }
+  });
+  await apiRoute.handler(reqOverflow.req, reqOverflow.res);
+  assert.equal(reqOverflow.res.statusCode, 400, 'Content-Length exceeding 25MB must reject with 400');
+
+  // #201: Store content limit
+  const store = new PreviewStore();
+  const hugeContent = 'a'.repeat(6 * 1024 * 1024); // 6MB
+  const session = store.createOrUpdateSession({ id: 'huge-test', content: hugeContent });
+  assert.ok(Buffer.byteLength(session.content, 'utf8') <= 5 * 1024 * 1024, 'Session content must be capped at 5MB');
+});
+
+test('Issue #160: store.clear(wipeDisk = true) unlinks persistence file from disk', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'dsh-wipe-test-'));
+  const persistencePath = path.join(tmpDir, 'sessions.json');
+  try {
+    const store = new PreviewStore({ persistencePath });
+    store.createOrUpdateSession({ id: 's1', content: '<div>Hello</div>' });
+    store.flush();
+    assert.ok(fs.existsSync(persistencePath), 'Persistence file must exist after flush');
+
+    // clear with wipeDisk=true
+    store.clear(true);
+    assert.ok(!fs.existsSync(persistencePath), 'Persistence file must be unlinked after clear(true)');
+  } finally {
+    try { fs.rmSync(tmpDir, { recursive: true, force: true }); } catch {}
+  }
+});
+
+test('Issue #161: Sandbox headers include strict CSP and SAMEORIGIN frame protection', () => {
+  const headers = getSandboxHeaders();
+  assert.equal(headers['X-Frame-Options'], 'SAMEORIGIN');
+  assert.ok(headers['Content-Security-Policy'].includes("default-src 'self'"), 'CSP must restrict default-src');
+  assert.equal(headers['X-Content-Type-Options'], 'nosniff');
+});
+
+test('Issue #162: sanitizeNpmPackageName ensures valid npm package naming', () => {
+  assert.equal(sanitizeNpmPackageName('123'), 'pkg-123', 'Purely numeric name must be prefixed');
+  assert.equal(sanitizeNpmPackageName('---'), 'live-project', 'Invalid symbols must fall back');
+  assert.equal(sanitizeNpmPackageName('fs'), 'pkg-fs', 'Node builtin must be prefixed');
+  assert.equal(sanitizeNpmPackageName('My Cool Project!'), 'my-cool-project', 'Special chars must be sanitized');
+  assert.equal(sanitizeNpmPackageName(''), 'live-project', 'Empty title must fall back');
+});
+
+test('Issue #150: Logger abstraction captures warnings and errors without raw console noise', () => {
+  let loggedWarn = null;
+  setLogger({
+    warn: (msg) => { loggedWarn = msg; },
+    info: () => {},
+    error: () => {}
+  });
+
+  logger.warn('Test logger warning');
+  assert.equal(loggedWarn, 'Test logger warning');
+  setLogger(console);
 });

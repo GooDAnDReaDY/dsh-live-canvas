@@ -147,6 +147,7 @@ test('#143: parseBody rejects malformed JSON cleanly and readJsonBody is defined
     url: '/dsh-live-canvas/api/save-reorder',
     method: 'POST',
     headers: { 'sec-fetch-site': 'same-origin' },
+    socket: { remoteAddress: '127.0.0.1' },
     body: '{ malformed json: not valid }',
     on: () => {},
     resume: () => {}
