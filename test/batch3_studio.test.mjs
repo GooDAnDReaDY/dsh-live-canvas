@@ -83,6 +83,11 @@ test('Batch 3 Tools 18, 19, 20 execute properly and conform to DSL', async () =>
   assert.ok(registeredTools.size >= 20, 'All 20 agent tools must be registered');
 
   // 1. Tool 18: live_canvas_visual_audit
+  store.createOrUpdateSession({
+    id: 'test-canvas',
+    title: 'Test UI',
+    content: '<header><nav><a href="/home">Home</a></nav></header><main><h1>Test</h1><p>Content</p></main>'
+  });
   const auditTool = registeredTools.get('live_canvas_visual_audit');
   assert.ok(auditTool);
   const auditRes = await auditTool.execute({ canvasId: 'test-canvas' });
