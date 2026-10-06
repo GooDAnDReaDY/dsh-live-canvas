@@ -20,6 +20,7 @@ function createMockReqRes(options = {}) {
     host: '127.0.0.1:3000',
     origin: 'http://127.0.0.1:3000'
   };
+  req.socket = options.socket || { remoteAddress: '127.0.0.1' };
 
   const res = new EventEmitter();
   res.headers = {};

@@ -10,6 +10,8 @@ function createMockReqRes(options = {}) {
   const req = new EventEmitter();
   req.url = options.url || '/';
   req.method = options.method || 'GET';
+  req.headers = options.headers || {};
+  req.socket = options.socket || { remoteAddress: '127.0.0.1' };
 
   const res = new EventEmitter();
   res.headers = {};
