@@ -180,7 +180,7 @@ graph TD
 | 2 | `live_canvas_inspect` | Retrieves user DOM clicks, CSS selectors, and element attributes | `canvasId`, `limit` | `inspections: [...]`, `count` |
 | 3 | `live_canvas_reload` | Forces instant SSE reload on open preview frames | `canvasId` | `reloaded`, `timestamp` |
 | 4 | `live_canvas_diagnose` | Queries sandbox console errors and exceptions for self-healing | `canvasId`, `level` | `logs: [...]`, `hasErrors` |
-| 5 | `live_canvas_export` | Exports standalone zero-dependency HTML bundle | `canvasId`, `saveToDisk` | `downloadUrl`, `savedPath` |
+| 5 | `live_canvas_export` | Exports standalone HTML bundle with pre-rendered markup and progressive runtime enhancement | `canvasId`, `saveToDisk` | `downloadUrl`, `savedPath` |
 | 6 | `live_canvas_annotations` | Queries or clears boxed visual annotations and user markup | `canvasId`, `action` | `annotations: [...]`, `count` |
 | 7 | `live_canvas_gallery` | Creates multi-variant Storybook comparison matrix | `variants`, `title` | `variantsCount`, `previewUrl` |
 | 8 | `live_canvas_watch` | Scans and binds workspace files to live file watcher | `subDir`, `exts` | `files: [...]`, `watchedFiles` |
@@ -192,7 +192,7 @@ graph TD
 | 14 | `live_canvas_refine_element` | Targets AI visual/structural refinement to a DOM element | `canvasId`, `selector`, `prompt` | `success`, `message` |
 | 15 | `live_canvas_storybook` | Auto-scans workspace components and creates UI Kit gallery | `subDir`, `framework` | `galleryUrl`, `componentsCount` |
 | 16 | `live_canvas_insert_block` | Inserts curated design block (Hero, Bento, Pricing, FAQ, Footer) | `blockId`, `canvasId` | `blockId`, `title` |
-| 17 | `live_canvas_vision_import` | Converts image mockup/screenshot into interactive canvas | `imagePath`, `framework` | `previewUrl`, `framework` |
+| 17 | `live_canvas_vision_import` | Imports reference UI image mockup or screenshot into interactive canvas scaffolding | `imagePath`, `framework` | `previewUrl`, `framework` |
 | 18 | `live_canvas_visual_audit` | Inspects canvas DOM for overflow, contrast, and layout issues | `canvasId` | `score`, `issuesCount`, `issues` |
 | 19 | `live_canvas_generate_mock` | Generates realistic mock JSON datasets and injects into sandbox | `type`, `count`, `canvasId` | `datasetType`, `mockData` |
 | 20 | `live_canvas_share` | Generates mobile QR code and local network preview URL | `canvasId` | `shareUrl`, `qrSvg` |
@@ -215,7 +215,7 @@ graph TD
 - **Mini-Console Drawer**: Real-time log/warn/error interception inside the sandbox with collapsible bottom drawer, level filtering, and toolbar badge count.
 - **Component State Presets Switcher**: Instant switching between `Default`, `Loading`, `Empty`, `Error`, and `Overflow` states via toolbar selector and DOM event triggers.
 - **Agent Vision Feedback Loop**: `live_canvas_capture_snapshot` lets coding agents query DOM structure or extract complete rendered HTML snapshots.
-- **Standalone Single-File HTML Export**: 1-click single-file bundle export at `/dsh-live-canvas/api/standalone` embedding all fonts, Tailwind, and scripts.
+- **Standalone Single-File HTML Export**: 1-click single-file bundle export at `/dsh-live-canvas/api/standalone` pre-rendering component markup for instant offline viewing with progressive CDN runtime enhancement.
 - **W3C Design Tokens Bridge**: Parses W3C / Figma design token JSON structures into live CSS custom properties.
 
 ## 📦 Installation

@@ -1,3 +1,4 @@
+import "./_setup.mjs";
 // dsh-live-canvas: dedicated unit tests for new features, standalone export, design tokens, snapshot tool, and zero-Cyrillic locale audit.
 
 import test from 'node:test';
