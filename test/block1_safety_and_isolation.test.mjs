@@ -1,3 +1,4 @@
+import "./_setup.mjs";
 import { isPrivateLanAddress, safeReplaceSubstring, isTrustedRequest } from '../lib/security.js';
 import { sanitizeNpmPackageName } from '../lib/packager.js';
 import { setLogger, logger } from '../lib/logger.js';
@@ -71,7 +72,8 @@ test('Issue #164: File bindings and imports strictly enforce workspaceRoots', as
     tools: { register: (t) => tools.push(t) }
   };
   registerLiveCanvasTools(mockCtx, store, { broadcast: () => {} }, {
-    getWorkspaceRoots: () => [allowedDir]
+    workspaceRoots: [allowedDir],
+    workspaceDir: allowedDir
   });
   const previewTool = tools.find(t => t.name === 'live_canvas_preview');
   assert.ok(previewTool, 'live_canvas_preview tool must be registered');
