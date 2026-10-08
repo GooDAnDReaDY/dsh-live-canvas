@@ -2,6 +2,21 @@
 
 Notable changes to `@goodandready/dsh-live-canvas`.
 
+## 0.2.28
+
+### Fixed
+- **Mobile QR Code ISO/IEC 18004 Compliance**: Replaced custom hand-rolled QR generator with standard `qrcode` dependency, guaranteeing 100% ZXing decoding accuracy for arbitrary URL lengths and payloads (#181).
+- **Multi-File ESM Bundler Scoping & Repeated Imports**: Wrapped inlined modules in IIFE closures with exported scope objects to eliminate top-level identifier collisions across modules; resolved repeated imports from the same file and JSON named import aliases (#194).
+- **Session Dependency Cache Invalidation**: Extended cache key fingerprinting to hash imported local child files, automatically invalidating transpile cache upon dependency file modifications (#174).
+- **Vue 3 SFC Preview Engine**: Added support for `<script setup>` top-level variable extraction and automatic exposure to `<template>`; corrected Options API server-side `export default` transformation; guarded Tailwind initialization for offline environments (#178).
+- **DOM Class Persistence & Precise Targeting**: Updated `save-classes` handler to target elements by exact selector ID/class and preserved pristine class names before DOM mutation (#168).
+- **Standalone HTML Export Offline Self-Containment**: Pre-rendered static component markup directly into `<div id="root">` / `<div id="app">` for immediate offline preview fallback without network access (#179).
+- **Visual Audit Viewport & CSS Inspection**: Added support for specific viewports (`mobile`, `tablet`, `desktop`); added inspection of CSS `inline-size`, `min-inline-size`, `width`, and `min-width` in `<style>` blocks and inline styles, failing audit on viewport overflow (#183).
+- **Vision Import Contract Alignment**: Reconciled documentation and tool schemas across READMEs, DESIGN.md, and tool definitions to clarify reference import scaffolding (#182).
+- **Projects Hub Demo Serialization**: Serialized demo source templates (`CALC_DEMO_CODE`, `DASH_DEMO_CODE`) into Projects Hub client script (#208).
+- **Console Telemetry Bridge**: Routed validated sandbox log events from trusted parent client to `/dsh-live-canvas/api/logs` via same-origin POST (#209).
+- **Test Environment & Options Contract**: Created `test/_setup.mjs` ensuring complete isolation of test runs from caller's `~/.dsh` environment; updated workspace roots option contract (#177, #207).
+
 ## 0.2.27
 
 ### Added

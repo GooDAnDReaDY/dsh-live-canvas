@@ -1,6 +1,6 @@
 {
   "name": "@goodandready/dsh-live-canvas",
-  "version": "0.2.27",
+  "version": "0.2.28",
   "description": "Interactive in-browser canvas for real-time preview of HTML, React components, SVGs, and diagrams with SSE hot-reload",
   "type": "module",
   "main": "lib/index.js",
@@ -20,7 +20,7 @@
     "CHANGELOG.md"
   ],
   "scripts": {
-    "test": "node --test test/*.test.mjs"
+    "test": "node --import ./test/_setup.mjs --test test/*.test.mjs"
   },
   "keywords": [
     "dsh",
@@ -67,10 +67,10 @@
   },
   "peerDependencies": {
     "@deepseek-ai/cordis": "^4.0.1",
+    "@deepseek-ai/dsh-host-webserver": ">=0.1.0-rc.6 <0.1.1 || >=0.1.1-rc.1 <0.1.2 || >=0.1.2-alpha.1 <1.0.0",
     "@deepseek-ai/dsh-settings": ">=0.1.0-rc.6 <0.1.1 || >=0.1.1-rc.1 <0.1.2 || >=0.1.2-alpha.1 <1.0.0",
-    "@deepseek-ai/schemastery": "^3.18.1",
     "@deepseek-ai/dsh-tools": ">=0.1.0-rc.6 <0.1.1 || >=0.1.1-rc.1 <0.1.2 || >=0.1.2-alpha.1 <1.0.0",
-    "@deepseek-ai/dsh-host-webserver": ">=0.1.0-rc.6 <0.1.1 || >=0.1.1-rc.1 <0.1.2 || >=0.1.2-alpha.1 <1.0.0"
+    "@deepseek-ai/schemastery": "^3.18.1"
   },
   "peerDependenciesMeta": {
     "@deepseek-ai/cordis": {
@@ -91,5 +91,8 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "dependencies": {
+    "qrcode": "^1.5.4"
   }
 }

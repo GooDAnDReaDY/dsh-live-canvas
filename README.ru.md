@@ -180,7 +180,7 @@ graph TD
 | 2 | `live_canvas_inspect` | Получение кликов пользователя, селекторов и стилей | `canvasId`, `limit` | `inspections: [...]`, `count` |
 | 3 | `live_canvas_reload` | Принудительная горячая перезагрузка открытых холстов | `canvasId` | `reloaded`, `timestamp` |
 | 4 | `live_canvas_diagnose` | Запрос логов ошибок и исключений консоли | `canvasId`, `level` | `logs: [...]`, `hasErrors` |
-| 5 | `live_canvas_export` | Экспорт автономного монолитного HTML-файла | `canvasId`, `saveToDisk` | `downloadUrl`, `savedPath` |
+| 5 | `live_canvas_export` | Экспорт автономного HTML-файла с предрендеренной разметкой и прогрессивным рантаймом | `canvasId`, `saveToDisk` | `downloadUrl`, `savedPath` |
 | 6 | `live_canvas_annotations` | Чтение или очистка графических пометок и замечаний | `canvasId`, `action` | `annotations: [...]`, `count` |
 | 7 | `live_canvas_gallery` | Создание матрицы состояний компонентов Storybook | `variants`, `title` | `variantsCount`, `previewUrl` |
 | 8 | `live_canvas_watch` | Сканирование и привязка файлов проекта к наблюдателю | `subDir`, `exts` | `files: [...]`, `watchedFiles` |
@@ -192,7 +192,7 @@ graph TD
 | 14 | `live_canvas_refine_element` | Точечная визуальная или структурная ИИ-правка элемента | `canvasId`, `selector`, `prompt` | `success`, `message` |
 | 15 | `live_canvas_storybook` | Автосканирование компонентов и создание Storybook галереи | `subDir`, `framework` | `galleryUrl`, `componentsCount` |
 | 16 | `live_canvas_insert_block` | Вставка дизайн-блока (Hero, Bento, Pricing, FAQ, Footer) | `blockId`, `canvasId` | `blockId`, `title` |
-| 17 | `live_canvas_vision_import` | Импорт скриншота / макета в интерактивный код | `imagePath`, `framework` | `previewUrl`, `framework` |
+| 17 | `live_canvas_vision_import` | Импорт референсного макета / скриншота в каркас предпросмотра Live Canvas | `imagePath`, `framework` | `previewUrl`, `framework` |
 | 18 | `live_canvas_visual_audit` | Аудит DOM на переполнение, контрастность и адаптивность | `canvasId` | `score`, `issuesCount`, `issues` |
 | 19 | `live_canvas_generate_mock` | Генерация реалистичных JSON мок-данных в песочницу | `type`, `count`, `canvasId` | `datasetType`, `mockData` |
 | 20 | `live_canvas_share` | Генерация QR-кода и локального URL для смартфона | `canvasId` | `shareUrl`, `qrSvg` |
@@ -215,7 +215,7 @@ graph TD
 - **Встроенная мини-консоль (Mini-Console Drawer)**: перехват `console.log/warn/error` и `window.onerror` из песочницы, сворачиваемая нижняя панель с фильтрацией и живой счетчик ошибок в тулбаре.
 - **Переключатель состояний компонентов (State Presets)**: мгновенный выбор состояний (`Default`, `Loading`, `Empty`, `Error`, `Overflow`) через выпадающий список тулбара и события DOM.
 - **Инструмент визуального фидбека агента**: `live_canvas_capture_snapshot` позволяет кодинг-агенту инспектировать структуру DOM или экспортировать полный HTML-снимок.
-- **Автономный экспорт в 1 HTML-файл**: готовая сборка со всеми стилями и скриптами по адресу `/dsh-live-canvas/api/standalone`.
+- **Автономный экспорт в 1 HTML-файл**: готовая сборка по адресу `/dsh-live-canvas/api/standalone` с предрендеренной разметкой для офлайн-просмотра и прогрессивным CDN-рантаймом.
 - **W3C Design Tokens мост**: конвертация дизайн-токенов W3C / Figma в живые CSS-переменные.
 
 ## 📦 Быстрая установка

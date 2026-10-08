@@ -123,7 +123,7 @@ graph TD
 | 2 | `live_canvas_inspect` | 获取用户点击的 DOM 元素、CSS 选择器与属性 | `canvasId`, `limit` | `inspections: [...]`, `count` |
 | 3 | `live_canvas_reload` | 强制向当前打开的预览画布广播 SSE 热重载事件 | `canvasId` | `reloaded`, `timestamp` |
 | 4 | `live_canvas_diagnose` | 查询沙箱控制台错误与异常，实现智能体自主修复 | `canvasId`, `level` | `logs: [...]`, `hasErrors` |
-| 5 | `live_canvas_export` | 导出单文件零依赖独立 HTML 页面 | `canvasId`, `saveToDisk` | `downloadUrl`, `savedPath` |
+| 5 | `live_canvas_export` | 导出包含预渲染标记及渐进式运行时的独立 HTML 演示包 | `canvasId`, `saveToDisk` | `downloadUrl`, `savedPath` |
 | 6 | `live_canvas_annotations` | 检索或清除画布上的矩形批注与用户反馈 | `canvasId`, `action` | `annotations: [...]`, `count` |
 | 7 | `live_canvas_gallery` | 渲染多组件状态 Storybook 并排对比矩阵 | `variants`, `title` | `variantsCount`, `previewUrl` |
 | 8 | `live_canvas_watch` | 扫描工作区文件并绑定实时文件监控器 | `subDir`, `exts` | `files: [...]`, `watchedFiles` |
@@ -135,7 +135,7 @@ graph TD
 | 14 | `live_canvas_refine_element` | 针对特定 DOM 元素执行精准的 AI 样式与结构优化 | `canvasId`, `selector`, `prompt` | `success`, `message` |
 | 15 | `live_canvas_storybook` | 自动扫描组件并构建 Storybook UI Kit 对比画廊 | `subDir`, `framework` | `galleryUrl`, `componentsCount` |
 | 16 | `live_canvas_insert_block` | 在项目中插入预置高端设计模块 (Hero, Bento, Pricing 等) | `blockId`, `canvasId` | `blockId`, `title` |
-| 17 | `live_canvas_vision_import` | 导入屏幕截图 / 设计稿并转换为实时交互代码 | `imagePath`, `framework` | `previewUrl`, `framework` |
+| 17 | `live_canvas_vision_import` | 将参考 UI 设计稿/截图导入为 Live Canvas 预览脚手架 | `imagePath`, `framework` | `previewUrl`, `framework` |
 | 18 | `live_canvas_visual_audit` | 自动化视觉审计：检查溢出、色彩对比度与响应式断点 | `canvasId` | `score`, `issuesCount`, `issues` |
 | 19 | `live_canvas_generate_mock` | 生成逼真的 JSON Mock 数据集并挂载至沙箱拦截器 | `type`, `count`, `canvasId` | `datasetType`, `mockData` |
 | 20 | `live_canvas_share` | 生成手机端实时预览二维码及局域网共享链接 | `canvasId` | `shareUrl`, `qrSvg` |
@@ -158,7 +158,7 @@ graph TD
 - **迷你控制台抽屉 (Mini-Console Drawer)**：沙箱内拦截 `console.log/warn/error` 与 `window.onerror`，底部可折叠诊断抽屉与工具栏错误计数。
 - **组件状态预设切换器 (State Presets)**：工具栏一键切换 `Default`、`Loading`、`Empty`、`Error` 与 `Overflow` 状态。
 - **视觉反馈闭环 (Vision Snapshot Loop)**：`live_canvas_capture_snapshot` 工具让智能体可直接读取渲染后 DOM 结构与快照。
-- **单文件独立 HTML 导出**：一键导出完全内联的独立 HTML 演示包 (`/dsh-live-canvas/api/standalone`)。
+- **单文件独立 HTML 导出**：一键导出包含预渲染离线标记的独立 HTML 包 (`/dsh-live-canvas/api/standalone`)。
 - **W3C 设计令牌解析器 (Design Tokens Bridge)**：一键解析 W3C / Figma Design Tokens JSON 并注入 CSS 变量。
 
 ## 📦 安装说明
