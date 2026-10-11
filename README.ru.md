@@ -278,6 +278,7 @@ Live Canvas использует многоуровневую модель за�
 - **Строгая изоляция путей (`resolveSafePath`)**: Любые операции чтения файлов через API и инструменты агента (`live_canvas_preview`, `/dsh-live-canvas/api/open-file`, `/dsh-live-canvas/api/workspace/files`) строго валидируются на нахождение внутри разрешённых каталогов (`workspaceRoots` или рабочий каталог процесса). Попытки чтения чувствительных системных файлов (например, `/etc/shadow`) или соседних директорий блокируются ошибкой `ERR_PATH_OUTSIDE_ROOTS` и статусом HTTP 403 Forbidden.
 - **Защита от CSRF и проверка источника (`isTrustedRequest`)**: Все мутирующие эндпоинты требуют совпадения `Origin` / `Referer` с хостом DSH, проверки `Sec-Fetch-Site: same-origin` или локального loopback-вызова.
 - **Content Security Policy в iframe**: Песочницы рендерятся в изолированных iframe с заголовками безопасности (`X-Frame-Options: SAMEORIGIN`, `X-Content-Type-Options: nosniff`) и строгой CSP.
+- **Экранирование DOM-атрибутов и адресный postMessage**: В витрине проектов (`Projects Hub`) все атрибуты путей и заголовков (`data-file-path`, `data-title`, `data-path`) экранируются через `escapeHtml` (безопасная работа с кавычками в именах файлов), а межфреймовые вызовы `postMessage` отправляются строго с проверкой `targetOrigin` (`window.location.origin`).
 
 ---
 
