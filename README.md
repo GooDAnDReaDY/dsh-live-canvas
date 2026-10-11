@@ -282,6 +282,7 @@ Live Canvas operates with enterprise-grade defensive sandboxing:
 - **Strict Path Sandboxing (`resolveSafePath`)**: All file access requests via API and agent tools (`live_canvas_preview`, `/dsh-live-canvas/api/open-file`, `/dsh-live-canvas/api/workspace/files`) must resolve within authorized workspace roots (`workspaceRoots` or the current process working directory). Attempts to traverse into sensitive parent directories (such as `/etc`, system binaries, or sibling folders) are rejected with `ERR_PATH_OUTSIDE_ROOTS` and HTTP 403 Forbidden.
 - **CSRF & Origin Verification (`isTrustedRequest`)**: Mutating endpoints require verified same-origin requests matching standard browser headers (`Sec-Fetch-Site: same-origin`, `Origin`, or `Referer`) or loopback authorization.
 - **Content Security Policy**: Canvas previews are rendered inside sandboxed iframes with strict CSP directives (`default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https: http:; X-Frame-Options: SAMEORIGIN; X-Content-Type-Options: nosniff`).
+- **DOM Attribute Escaping & Scoped Frame Messaging**: Projects Hub sanitizes all `data-file-path`, `data-title`, and `data-path` attributes via `escapeHtml` (supporting filenames with quotes and special characters) and restricts parent frame `postMessage` delivery to explicit `targetOrigin` (`window.location.origin`).
 
 ---
 

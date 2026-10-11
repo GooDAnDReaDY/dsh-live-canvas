@@ -2,6 +2,13 @@
 
 Notable changes to `@goodandready/dsh-live-canvas`.
 
+## 0.2.29
+
+### Fixed
+- **Projects Hub Attribute Sanitization**: Enforced full HTML escaping (`escapeHtml`) on `data-file-path`, `data-title`, and `data-path` attributes in Projects Hub so filenames with single/double quotes (`"`, `'`) or HTML tags never break DOM attributes (#211).
+- **Projects Hub postMessage Origin Restriction**: Scoped `window.parent.postMessage` events (`dlc_open_session`, `dlc_open_file`, `dlc_session_created`) in Projects Hub to explicit `targetOrigin` (`window.location.origin`) instead of wildcard `'*'` (#211).
+- **Logger Console Fallback Contract**: Documented the architectural fallback of `lib/logger.js` to standard `console.*` methods in `docs/design/DESIGN.md` when Cordis logger context is absent (#211).
+
 ## 0.2.28
 
 ### Fixed

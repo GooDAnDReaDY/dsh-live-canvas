@@ -195,6 +195,7 @@ Live Canvas 具备企业级防御与沙箱隔离机制：
 - **严格路径沙箱 (`resolveSafePath`)**：所有通过 API 和智能体工具 (`live_canvas_preview`、`/dsh-live-canvas/api/open-file`、`/dsh-live-canvas/api/workspace/files`) 访问文件的请求必须严格位于授权工作区根目录 (`workspaceRoots` 或当前工作目录) 内部。企图跨越至父级敏感目录（如 `/etc` 或同级未授权目录）的操作均会被拦截，返回 `ERR_PATH_OUTSIDE_ROOTS` 及 HTTP 403 Forbidden。
 - **CSRF 与源验证 (`isTrustedRequest`)**：所有写操作端点均校验同源请求头 (`Sec-Fetch-Site: same-origin`、`Origin` 或 `Referer`) 或本地回环网络调用。
 - **内容安全策略 (CSP)**：画布预览于沙箱 iframe 中呈现，具备严格安全策略 (`X-Frame-Options: SAMEORIGIN`、`X-Content-Type-Options: nosniff` 等)。
+- **DOM 属性转义与同源消息投递**：项目中心 (`Projects Hub`) 对所有 `data-file-path`、`data-title` 和 `data-path` 属性执行严格 `escapeHtml` 转义（支持含引号与特殊字符的文件名），并将跨帧 `postMessage` 严格限制在明确的 `targetOrigin` (`window.location.origin`)。
 
 ---
 
