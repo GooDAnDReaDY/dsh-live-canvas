@@ -313,9 +313,9 @@
     - Экспортирована функция `resolveDshHome()`, гарантирующая приоритет переменной окружения `process.env.DSH_HOME` перед `~/.dsh`.
     - Директория персистентности сессий вынесена в `path.join(resolveDshHome(), 'data', 'dsh-live-canvas')`.
     - Тесты (`test/plugin.test.mjs`, `test/block1_safety_and_isolation.test.mjs`) изолируют `process.env.DSH_HOME` во временных директориях, предотвращая загрязнение реального каталога пользователя.
-  - **Безопасная обработка событий в Projects Hub (#195)**:
+  - **Безопасная обработка событий в Projects Hub (#195, #211)**:
     - В витрине проектов (`Projects Hub`) устранены инлайн-обработчики событий `onclick="openSession(...)"`, `onclick="openFile(...)"`, `onclick="loadDemo(...)"`.
-    - Данные передаются через безопасные атрибуты `data-session-id`, `data-file-path`, `data-demo` с единым делегированным обработчиком `addEventListener("click", ...)`.
+    - Данные передаются через безопасные атрибуты `data-session-id`, `data-file-path`, `data-demo` с единым делегированным обработчиком `addEventListener("click", ...)`. Атрибуты путей и заголовков полностью экранируются через `escapeHtml` (включая одинарные и двойные кавычки), а события `window.parent.postMessage` адресуются с проверкой `targetOrigin` (`(window.location.origin && window.location.origin !== "null" ? window.location.origin : "*")`) вместо широковещательного `*`.
 - **Восстановление рантайма, контрактов инструментов и API (Block 2 Audit, Refs: #163, #149, #152, #153, #154, #155, #169, #170, #171, #172, #173, #174, #187, #188)**:
   - **Устранение синтаксических и runtime-ошибок скрипта песочницы (#163, #170)**:
     - Из шаблона инжекции `injectSandboxRuntime` в `lib/sandbox.js` удалены дублирующееся объявление `const origLog` и задвоенный блок телеметрии.
@@ -372,8 +372,9 @@
     - `store.clear(true)` выполняет удаление файла персистентности с диска через `fs.unlinkSync`, а не вызов `flush()`.
   - **Валидация имени генерируемого npm-пакета (#162)**:
     - Функция `sanitizeNpmPackageName` приводит названия к валидному стандарту npm (добавление префикса `pkg-` для чисто числовых имен и встроенных модулей Node.js, фильтрация спецсимволов).
-  - **Логгер Cordis и устранение прямого console.* (#150)**:
+  - **Логгер Cordis, console fallback и устранение прямого console.* (#150, #211)**:
     - Создан модуль `lib/logger.js`, интегрирующий `ctx.logger('dsh-live-canvas')` в рантайм плагина, заменив прямой вызов `console.*` в хостовых модулях.
+    - **Архитектурный fallback на console.***: При отсутствии внедренного инстанса Cordis логгера (в тестах, автономных CLI-скриптах или изолированных утилитах без сервиса Cordis) `lib/logger.js` прозрачно перенаправляет вызовы на стандартные `console.info`, `console.warn`, `console.error` и `console.debug`. Это исключает исключения вида `Cannot read properties of undefined` и обеспечивает наблюдаемость без жесткой привязки к активному хост-контейнеру.
 
 - **Блок 4: Bundler, Transpiler, Export & Engine Correctness (Refs: #178, #179, #181, #184, #185, #191, #194)**:
   - **Исправление default import regex и поддержка JSON/алиасов (#194)**:
