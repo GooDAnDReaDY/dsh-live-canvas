@@ -2,6 +2,14 @@
 
 Notable changes to `@goodandready/dsh-live-canvas`.
 
+## 0.2.30
+
+### Fixed
+- **Route Family Origin & Authentication Gating**: Protected all registered route families (`/events`, `/sandbox`, `/diff`, `/matrix`, `/timetravel`, `/assets`, and `/api`) with strict `isTrustedRequest` origin/loopback verification, blocking unauthenticated LAN or cross-site exploration of session code, history, and workspace files (#213).
+- **Dynamic Volatile Configuration Reactivity**: Added reactive observation of `loader/volatile-update`, `config`, and `settings/document-updated` Cordis lifecycle events, dynamically updating active settings across `PreviewStore`, `WorkspaceWatcher`, and agent tools without harness restart (#213).
+- **Host-Wide Prototype Mutation Elimination**: Removed monkey-patching of `Schema.prototype.volatile` on the shared Schemastery host class, introducing safe local `markVolatile(schema)` wrapping with `.extra("volatile", true)` to preserve isolation for neighboring Cordis plugins (#213).
+- **Updater Status Endpoint Authorization**: Gated updater GET/HEAD status endpoint (`/api/dsh-live-canvas/update`) with `isTrustedStatusRequest`, preventing unauthenticated LAN disclosure of installed and available plugin versions (#213).
+
 ## 0.2.29
 
 ### Fixed

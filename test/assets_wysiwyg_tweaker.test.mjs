@@ -45,7 +45,7 @@ test('Static assets, WYSIWYG save-content, style tweaker, and AI refine tools wo
   const mockStreamRes = new PassThrough();
   mockStreamRes.writeHead = (st, hdrs) => { assetStatus = st; assetHeaders = hdrs; };
 
-  assetHandler({ url: '/dsh-live-canvas/assets/Hero.html' }, mockStreamRes);
+  assetHandler({ url: '/dsh-live-canvas/assets/Hero.html', socket: { remoteAddress: '127.0.0.1' } }, mockStreamRes);
   assert.equal(assetStatus, 200, 'Asset server should respond with 200 for existing file');
 
   // Wait for stream to finish reading

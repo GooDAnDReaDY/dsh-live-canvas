@@ -413,3 +413,15 @@
   - **Полная локализация служебных сообщений и feedback-тостов (#196)**:
     - Все системные уведомления (`showToast`, `setToastMsg`) в `lib/client.js` переведены на использование словарей локализации `t(...)`.
     - Достигнут 100% паритет ключей между словарями `en` и `zh` при нулевом вхождении кириллических символов в `lib/*.js`.
+
+- **Блок 6: Защита маршрутов, динамическая volatile конфигурация и изоляция прототипа (Refs: #213)**:
+  - **Аутентификация и валидация источника для всех семейств маршрутов (#213)**:
+    - Все семейства зарегистрированных маршрутов (`/dsh-live-canvas/events`, `/dsh-live-canvas/sandbox`, `/dsh-live-canvas/diff`, `/dsh-live-canvas/matrix`, `/dsh-live-canvas/timetravel`, `/dsh-live-canvas/assets`) закрыты проверкой `isTrustedRequest(req)` (возврат HTTP 403 Forbidden для нелокальных/ненадежных IP и cross-site запросов).
+    - Эндпоинт `GET /api/dsh-live-canvas/update` в `lib/updater.js` закрыт проверкой `isTrustedStatusRequest(request)`, блокируя неавторизованное зондирование версий пакета из внешних сетей и межсайтовых запросов.
+  - **Динамическая реактивность volatile конфигурации без перезапуска Cordis (#213)**:
+    - Реализована функция `resolveConfigObject` и синхронизатор `updateRuntimeConfig`, реагирующие на события `loader/volatile-update`, `config` и `settings/document-updated`.
+    - Изменения `maxSessionCache`, `defaultViewport`, `enableFileWatcher`, `workspaceRoots` на лету применяются к `PreviewStore`, `WorkspaceWatcher` и объекту `cfg` плагина.
+    - В `registerLiveCanvasTools` опции `workspaceDir` и `workspaceRoots` передаются через геттеры, гарантируя чтение актуальных настроек агентами без перезапуска плагина.
+  - **Устранение модификации Schema.prototype (#213)**:
+    - Удален глобальный monkey-patching `Schema.prototype.volatile = ...`, влиявший на все сторонние плагины в рантайме Cordis.
+    - Создана локальная безопасная функция `markVolatile(schema)`, использующая `.extra('volatile', true)` и не затрагивающая прототип Schemastery.
