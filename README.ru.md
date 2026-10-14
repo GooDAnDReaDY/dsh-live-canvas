@@ -279,6 +279,7 @@ Live Canvas использует многоуровневую модель за�
 - **Защита от CSRF и проверка источника (`isTrustedRequest`)**: Все мутирующие эндпоинты требуют совпадения `Origin` / `Referer` с хостом DSH, проверки `Sec-Fetch-Site: same-origin` или локального loopback-вызова.
 - **Content Security Policy в iframe**: Песочницы рендерятся в изолированных iframe с заголовками безопасности (`X-Frame-Options: SAMEORIGIN`, `X-Content-Type-Options: nosniff`) и строгой CSP.
 - **Экранирование DOM-атрибутов и адресный postMessage**: В витрине проектов (`Projects Hub`) все атрибуты путей и заголовков (`data-file-path`, `data-title`, `data-path`) экранируются через `escapeHtml` (безопасная работа с кавычками в именах файлов), а межфреймовые вызовы `postMessage` отправляются строго с проверкой `targetOrigin` (`window.location.origin`).
+- **Комплексная защита всех семейств маршрутов и динамический volatile-конфиг**: Все зарегистрированные маршруты (`/events`, `/sandbox`, `/diff`, `/matrix`, `/timetravel`, `/assets`, `/api` и статус апдейтера) защищены проверкой `isTrustedRequest` / `isTrustedStatusRequest` с возвратом 403 Forbidden на нелокальные и cross-site запросы. Настройки плагина реактивно обновляются на лету через события `loader/volatile-update` и `config` Cordis без перезапуска харнесса.
 
 ---
 

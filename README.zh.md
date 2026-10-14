@@ -196,6 +196,7 @@ Live Canvas 具备企业级防御与沙箱隔离机制：
 - **CSRF 与源验证 (`isTrustedRequest`)**：所有写操作端点均校验同源请求头 (`Sec-Fetch-Site: same-origin`、`Origin` 或 `Referer`) 或本地回环网络调用。
 - **内容安全策略 (CSP)**：画布预览于沙箱 iframe 中呈现，具备严格安全策略 (`X-Frame-Options: SAMEORIGIN`、`X-Content-Type-Options: nosniff` 等)。
 - **DOM 属性转义与同源消息投递**：项目中心 (`Projects Hub`) 对所有 `data-file-path`、`data-title` 和 `data-path` 属性执行严格 `escapeHtml` 转义（支持含引号与特殊字符的文件名），并将跨帧 `postMessage` 严格限制在明确的 `targetOrigin` (`window.location.origin`)。
+- **全路由族访问防护与动态易失配置响应**：所有已注册的路由族（`/events`、`/sandbox`、`/diff`、`/matrix`、`/timetravel`、`/assets`、`/api` 及更新器状态）均通过 `isTrustedRequest` / `isTrustedStatusRequest` 进行严格源验证，阻断非受信外网及跨站请求（返回 403 Forbidden）。运行时配置变更通过 Cordis `loader/volatile-update` 与 `config` 事件即时响应并应用于会话存储、文件监视器和工具，无需重启 Cordis 服务。
 
 ---
 

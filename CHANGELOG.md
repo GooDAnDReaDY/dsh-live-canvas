@@ -2,7 +2,7 @@
 
 Notable changes to `@goodandready/dsh-live-canvas`.
 
-## 0.2.30
+## 0.2.30 (2026-10-14)
 
 ### Fixed
 - **Route Family Origin & Authentication Gating**: Protected all registered route families (`/events`, `/sandbox`, `/diff`, `/matrix`, `/timetravel`, `/assets`, and `/api`) with strict `isTrustedRequest` origin/loopback verification, blocking unauthenticated LAN or cross-site exploration of session code, history, and workspace files (#213).
