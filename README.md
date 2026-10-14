@@ -283,6 +283,7 @@ Live Canvas operates with enterprise-grade defensive sandboxing:
 - **CSRF & Origin Verification (`isTrustedRequest`)**: Mutating endpoints require verified same-origin requests matching standard browser headers (`Sec-Fetch-Site: same-origin`, `Origin`, or `Referer`) or loopback authorization.
 - **Content Security Policy**: Canvas previews are rendered inside sandboxed iframes with strict CSP directives (`default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https: http:; X-Frame-Options: SAMEORIGIN; X-Content-Type-Options: nosniff`).
 - **DOM Attribute Escaping & Scoped Frame Messaging**: Projects Hub sanitizes all `data-file-path`, `data-title`, and `data-path` attributes via `escapeHtml` (supporting filenames with quotes and special characters) and restricts parent frame `postMessage` delivery to explicit `targetOrigin` (`window.location.origin`).
+- **Comprehensive Route Family Protection & Volatile Reactivity**: All registered route families (`/events`, `/sandbox`, `/diff`, `/matrix`, `/timetravel`, `/assets`, `/api`, and updater status) are guarded by `isTrustedRequest` / `isTrustedStatusRequest`, rejecting untrusted LAN or cross-site requests with 403 Forbidden. Runtime configuration changes via Cordis `loader/volatile-update` and `config` events are dynamically observed and applied live to store, watcher, and tools without restarting the harness.
 
 ---
 
