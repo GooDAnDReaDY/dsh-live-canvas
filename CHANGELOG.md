@@ -2,6 +2,11 @@
 
 Notable changes to `@goodandready/dsh-live-canvas`.
 
+## 0.2.31 (2026-10-21)
+
+### Security
+- **LAN Client Authentication & Write Route Protection (#215)**: Integrated DSH connection service authentication (`ctx.connection.requestRejection(req)`) across all HTTP route families. Prevented unauthenticated LAN callers without `Origin` header from accessing `/dsh-live-canvas/events`, `/api/logs`, `/api/annotate`, and mutating endpoints (`save-content`, `save-classes`, `save-reorder`). Mutating endpoints now strictly enforce peer session admission via `getWriteRejectionStatus`.
+
 ## 0.2.30 (2026-10-14)
 
 ### Fixed
