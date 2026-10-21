@@ -1,3 +1,8 @@
+## 0.2.32 (2026-10-21)
+
+### Fixed
+- **Cordis Context Proxy Guard**: Handled strict Cordis Context Proxy exceptions when reading `connection` service on contexts without injection, safely subscribing via `ctx.inject(['connection'])` while preserving loopback admission (#215).
+
 # Changelog
 
 Notable changes to `@goodandready/dsh-live-canvas`.
