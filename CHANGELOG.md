@@ -1,3 +1,14 @@
+## 0.2.33 (2026-10-22)
+
+### Fixed
+- **Cordis Proxy Safe Resolution (#218, GitHub #5)**: Introduced `getService(c, name)` helper using `c.get(name)` and defensive property reading across client side, preventing `Error: cannot get property ... without inject` crashes in `openLiveCanvasInSidebar` and `registerNativeSidebar` when optional services (`sidebarRight`, `betterSidebar`, `slots`, `locale`) are not in `inject`.
+- **DSH 0.2.x Sidebar Tab Hook (#218, GitHub #5)**: Supported DSH 0.2.x standard hook prop `props.useTabInfo` in `NativeLiveCanvasTab` with backwards-compatible fallback to `props.hooks.tabInfo`, ensuring the tab resolves resource address correctly and attaches to the target canvas instead of mounting an unlinked `'default'` canvas.
+- **Guide Entry Schema Compliance (#218, GitHub #5)**: Added explicit `id: 'live-canvas'` to the sidebar guide entry declaration, preventing duplicate-id collisions and schema validation errors in `dsh-client-ui-sidebar-right`.
+- **Toast Notification Engine (#218, GitHub #5)**: Implemented `showToast(msg)` with state management and auto-dismiss timer in `LiveCanvasWorkspace`, eliminating 28+ `ReferenceError: showToast is not defined` crashes.
+- **File Open Error Handling (#218, GitHub #5)**: Narrowed `openFile` error catching so general runtime exceptions or network hiccups no longer trigger false "File Access Restricted" modals; only genuine sandbox/root violation codes (`ERR_PATH_OUTSIDE_ROOTS`, `ERR_ACCESS_DENIED`) activate restricted access reporting.
+- **Storybook Sessions Refresh (#218, GitHub #5)**: Fixed Storybook matrix generation handler to call existing `loadSessionsAndFiles()` instead of non-existent `fetchSessions()`.
+- **Visual Annotations Sandbox Scope (#218, GitHub #5)**: Declared `let annotationCanvas = null;` in `lib/sandbox.js` injected runtime, preventing `Uncaught ReferenceError: annotationCanvas is not defined` when enabling visual annotation mode.
+
 ## 0.2.32 (2026-10-21)
 
 ### Fixed
