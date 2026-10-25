@@ -1,6 +1,7 @@
 ## Unreleased
 
 ### Fixed
+- Leave ordinary Markdown files to the host file editor instead of opening Live Canvas. Explicit Canvas URLs, including IDs ending in `.md`, remain supported.
 - Mount only the active standard or Matrix viewport. Hidden sidebar panels release their preview documents and update connection while retaining the selected Canvas and panel controls.
 - Share one update stream per visible workspace across its embedded previews, including Projects Hub. Standalone tabs and inline chat previews retain independent hot reload.
 - Abort background discovery and guard late responses so cleanup cannot be followed by a new EventSource. Refresh every active Matrix frame without switching to an unrelated Canvas.

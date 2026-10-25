@@ -59,11 +59,23 @@ for (const address of [
   assert.equal(context.NativeLiveCanvasTabBody({ address }).props.role, 'alert');
 }
 assert.equal(definition.canOpen('dsh-resource://file/session/s1/readme.txt'), false);
-for (const ext of ['html', 'jsx', 'svg', 'md']) {
+for (const ext of ['html', 'htm', 'jsx', 'tsx', 'svg', 'mermaid', 'mmd']) {
   const address = `dsh-resource://file/session/s1/example.${ext}`;
   assert.equal(definition.canOpen(address), true);
   assert.equal(context.NativeLiveCanvasTabBody({ address }).type, context.LiveCanvasFileViewer);
 }
+for (const address of [
+  'README.md',
+  '/workspace/README.md',
+  'dsh-resource://file/session/s1/docs/README.md',
+  'dsh-resource://file/session/s1/docs/README.MD?line=12#section',
+  'dsh-resource://file/absolute/workspace/docs/README.md',
+  'dsh-resource://file/session/s1/docs/README.markdown'
+]) {
+  assert.equal(definition.canOpen(address), false, `Markdown must use the file editor: ${address}`);
+}
+assert.ok(!definition.patterns.some(pattern => pattern.endsWith('.md')), 'Canvas must not claim Markdown file patterns');
+assert.equal(definition.canOpen('/dsh-live-canvas/sandbox/preview.md'), true, 'Canvas IDs may still end in .md');
 
 const lifetime = new AbortController();
 const tab = { id: 'host-tab-id', contentId: valid[2], navigation: { address: valid[2], revision: 1 }, signal: lifetime.signal };
