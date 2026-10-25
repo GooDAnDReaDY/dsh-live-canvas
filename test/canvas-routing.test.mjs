@@ -18,6 +18,7 @@ function evaluateBetween(start, end) {
   assert.ok(begin >= 0 && finish > begin, `Missing source boundary: ${start}`);
   vm.runInContext(source.slice(begin, finish), context);
 }
+evaluateBetween('function getService(', '// ---------------------------------------------------------------- Localization Strings');
 evaluateBetween('function extractFilePathFromAddress(', 'function LiveCanvasIcon(');
 evaluateBetween('function registerNativeSidebar(', '// ---------------------------------------------------------------- Better Sidebar Integration Helper');
 evaluateBetween('function openLiveCanvasInSidebar(', 'function LiveCanvasChatCard(');
@@ -68,6 +69,12 @@ const lifetime = new AbortController();
 const tab = { id: 'host-tab-id', contentId: valid[2], navigation: { address: valid[2], revision: 1 }, signal: lifetime.signal };
 const render = sessionId => context.NativeLiveCanvasTabBody({ sessionId, tabInfo: { tab } });
 assert.equal(render('session-a').props.canvasId, 'canvas-a');
+assert.equal(context.NativeLiveCanvasTabBody({ sessionId: 'session-a', tabInfo: { tab }, visible: false }).props.visible, false);
+assert.equal(context.NativeLiveCanvasTabBody({ address: 'example.html', visible: false }).props.visible, false);
+tab.visible = false;
+assert.equal(context.NativeLiveCanvasTabBody({ sessionId: 'session-a', tabInfo: { tab }, visible: true }).props.visible, false);
+assert.equal(context.NativeLiveCanvasTabBody({ address: 'example.html', tabInfo: { tab: { visible: false } } }).props.visible, false);
+tab.visible = true;
 render('session-a').props.onCanvasChange('canvas-b');
 assert.equal(render('session-a').props.canvasId, 'canvas-b');
 assert.equal(render('session-b').props.canvasId, 'canvas-a');
@@ -108,4 +115,16 @@ for (const native of [true, false]) {
   vm.runInContext(registration, context);
 }
 assert.equal(legacyCalls, 1);
+const inactiveNative = new Proxy({
+  get(name, strict) { return name === 'sidebarRightTabs' && strict === false ? { register() {} } : undefined; },
+  inject(_services, callback) { callback(inactiveNative); }
+}, {
+  get(target, name) {
+    if (name === 'sidebarRightTabs') throw new Error('Service property requires inject');
+    return target[name];
+  }
+});
+context.ctx = inactiveNative;
+vm.runInContext(registration, context);
+assert.equal(legacyCalls, 1, 'An inactive native provider must not create a duplicate legacy tab');
 console.log('PASS: resource parsing, native tab selection, session isolation, cleanup, ordinary files, and legacy fallback.');

@@ -1,3 +1,13 @@
+## Unreleased
+
+### Fixed
+- Mount only the active standard or Matrix viewport. Hidden sidebar panels release their preview documents and update connection while retaining the selected Canvas and panel controls.
+- Share one update stream per visible workspace across its embedded previews, including Projects Hub. Standalone tabs and inline chat previews retain independent hot reload.
+- Abort background discovery and guard late responses so cleanup cannot be followed by a new EventSource. Refresh every active Matrix frame without switching to an unrelated Canvas.
+- Detect native sidebar providers during startup before registering the legacy fallback, avoiding duplicate tab kinds on Cordis hosts.
+
+Preview documents are recreated when a hidden panel is shown again or its viewport mode changes. Transient state inside a preview, such as an unsaved React counter, may reset; the selected Canvas remains unchanged.
+
 ## 0.2.33 (2026-10-22)
 
 ### Fixed
