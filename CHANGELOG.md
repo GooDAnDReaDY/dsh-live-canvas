@@ -1,3 +1,22 @@
+## 0.2.34 (2026-10-26)
+
+### Fixed
+- **Markdown Routing to Host Editor (#220, GitHub PR #6)**: Leave ordinary Markdown files to the host file editor instead of opening Live Canvas, preventing ENOENT errors when clicking canvas links in chat. Explicit Canvas URLs, including IDs ending in `.md`, remain supported.
+- **Viewport Lifecycle & Hidden Panel Cleanup (#220, GitHub PR #6)**: Mount only the active standard or Matrix viewport (1 iframe standard, 3 Matrix, 0 hidden). Hidden sidebar panels release their preview documents and update connection while retaining the selected Canvas and panel controls (`tabInfo.tab.visible`).
+- **Shared SSE Update Stream (#220, GitHub PR #6)**: Share one update stream per visible workspace across embedded previews (`Projects Hub` and sandbox frames via `?parentManaged=1`), avoiding 4–5 duplicate EventSource connections. Standalone tabs and inline chat previews retain independent hot reload.
+- **Race Condition & Connection Cleanup (#220, GitHub PR #6)**: Abort background discovery and guard late responses so cleanup cannot be followed by an orphaned EventSource. Refresh every active Matrix frame without switching to an unrelated Canvas.
+- **Strict Address & Demo Validation (#220, GitHub PR #6)**: Return HTTP 404 for unknown Canvas IDs, HTTP 400 for malformed URI encoding, and validate server-owned demo templates (`calc`, `dash`).
+- **Headless & Test Environment Safety (#220)**: Guarded `window.location.origin` lookups with safe fallbacks, ensuring robust execution in Node.js, test runners, and environments without DOM `location`.
+
+### Fixed
+- Leave ordinary Markdown files to the host file editor instead of opening Live Canvas. Explicit Canvas URLs, including IDs ending in `.md`, remain supported.
+- Mount only the active standard or Matrix viewport. Hidden sidebar panels release their preview documents and update connection while retaining the selected Canvas and panel controls.
+- Share one update stream per visible workspace across its embedded previews, including Projects Hub. Standalone tabs and inline chat previews retain independent hot reload.
+- Abort background discovery and guard late responses so cleanup cannot be followed by a new EventSource. Refresh every active Matrix frame without switching to an unrelated Canvas.
+- Detect native sidebar providers during startup before registering the legacy fallback, avoiding duplicate tab kinds on Cordis hosts.
+
+Preview documents are recreated when a hidden panel is shown again or its viewport mode changes. Transient state inside a preview, such as an unsaved React counter, may reset; the selected Canvas remains unchanged.
+
 ## 0.2.33 (2026-10-22)
 
 ### Fixed
