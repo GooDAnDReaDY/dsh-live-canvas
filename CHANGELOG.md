@@ -1,3 +1,11 @@
+## 0.2.35 (2026-10-28)
+
+### Fixed
+- **Better Sidebar Duplicate Tab Kind Elimination (#222)**: Suppressed legacy fallback `betterSidebar.registerTab` when native `sidebarRightTabs` is present, preventing duplicate `tab kind "live-canvas" is already registered (extension)` runtime collision thrown by Better Sidebar's native surface bridge.
+- **Better Sidebar File Viewer Retention (#222)**: Preserved unconditional registration of `betterSidebar.registerFileViewer` across all host environments so file tree context previews remain fully functional.
+- **Cordis Context Root Service Resolution (#222)**: Enhanced `getService(c, name)` helper to inspect `c.root[name]` when property access on child contexts triggers Cordis uninjected proxy exceptions, ensuring reliable detection of host services regardless of fiber injection state.
+- **Startup Order & Dynamic Handshake Safety (#222)**: Ensured seamless coordination regardless of plugin activation order. If Better Sidebar activates first, its fallback tab is automatically revoked when `registerNativeSidebar` mounts; if native sidebar disposes, the fallback tab gracefully reactivates.
+
 ## 0.2.34 (2026-10-26)
 
 ### Fixed
