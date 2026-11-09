@@ -1,3 +1,10 @@
+## 0.2.36 (2026-11-09)
+
+### Fixed
+- **Snapshot HTML Output Schema Validation (#224, GitHub #7)**: Declared missing `sourceType` and `html` fields in `output.schema.properties` of tool `live_canvas_capture_snapshot` (`additionalProperties: false`), resolving output rejection errors in DSH tool runner when `format: 'html'` is requested.
+- **Complete Standalone HTML Snapshot Return (#224, GitHub #7)**: Provided complete standalone HTML document in the `html` field upon capturing HTML snapshots instead of only exposing a truncated 1200-character snippet in `snapshotSnippet`.
+- **Tool Output Schema Integrity Audit (#224)**: Verified all 31 agent tool definitions to ensure 100% compliance between execution return payloads and their declared output schemas.
+
 ## 0.2.35 (2026-10-28)
 
 ### Fixed
