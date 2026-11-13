@@ -1,3 +1,11 @@
+## 0.2.37 (2026-11-13)
+
+### Fixed
+- **Worktree Housekeeping Cleanup (#228)**: Removed stale merged worktrees and branches for `fix/dsh-live-canvas-config-forms`, `fix/dsh-live-canvas-settings-namespace`, and `fix/dsh-live-canvas-settings-scope` after proving full ancestor ancestry against `origin/main`.
+- **Release Tarball & Pack Validation (#227)**: Removed outdated tarball `goodandready-dsh-live-canvas-0.2.23.tgz` from source checkout. Integrated `scripts/pack-check.mjs` and `npm run pack:check` to enforce zero release archives in source root, verify pack size limits (<262,144 bytes per file), and ensure presence of all mandatory distribution files.
+- **Client Theme Token Compliance (#229)**: Replaced hardcoded color literals (`#172433` and `#fff`) in `lib/client.js` with semantic DSH design system tokens (`var(--dsw-alias-bg-layer-3)` and `var(--dsw-alias-label-primary)`), introducing `.dlc-chat-card-status-badge` for seamless adaptability across both light and dark themes.
+- **Architectural Documentation Alignment (#226)**: Synchronized module sizes and rationale in `docs/design/DESIGN.md` with actual code metrics (`lib/index.js`, `lib/transpiler.js`, `lib/sandbox.js`, `lib/store.js`), documenting the architectural necessity of centralized Cordis route dispatch and Babel standalone in-memory compilation. Added automated tests preventing documentation drift.
+
 ## 0.2.36 (2026-11-09)
 
 ### Fixed

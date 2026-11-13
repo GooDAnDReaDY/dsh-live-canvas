@@ -1,6 +1,6 @@
 {
   "name": "@goodandready/dsh-live-canvas",
-  "version": "0.2.36",
+  "version": "0.2.37",
   "description": "Interactive in-browser canvas for real-time preview of HTML, React components, SVGs, and diagrams with SSE hot-reload",
   "type": "module",
   "main": "lib/index.js",
@@ -20,7 +20,8 @@
     "CHANGELOG.md"
   ],
   "scripts": {
-    "test": "node --import ./test/_setup.mjs --test test/*.test.mjs"
+    "test": "node --import ./test/_setup.mjs --test test/*.test.mjs",
+    "pack:check": "node ./scripts/pack-check.mjs"
   },
   "keywords": [
     "dsh",
